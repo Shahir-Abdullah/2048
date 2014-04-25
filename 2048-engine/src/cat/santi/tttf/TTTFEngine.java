@@ -296,6 +296,7 @@ public class TTTFEngine {
 	protected void __print() {
 		
 		System.out.println(String.format("================== TURN : %4d ===================", getTurns() + 1));
+		System.out.println();
 		for(int indexR = 0 ; indexR < board.getHeight() ; indexR++) {
 			
 			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++) {
@@ -303,6 +304,7 @@ public class TTTFEngine {
 				final int value = board.getSquare(indexR, indexC).getValue();
 				final boolean isJustCreated = board.getSquare(indexR, indexC).isJustCreated();
 				
+				System.out.print("  ");
 				if(value != Square.VOID_VALUE) {
 
 					if(isJustCreated)
@@ -311,7 +313,7 @@ public class TTTFEngine {
 						System.out.print(String.format(" %04d ", value) + " ");
 				} else{
 					
-					System.out.print(" ····  ");
+					System.out.print(" ____  ");
 				}
 			}
 			System.out.println();
