@@ -5,8 +5,9 @@ import cat.santi.tttf.exceptions.GameNotInitializedException;
 
 public class Board {
 
-	public static final int DEFAULT_WIDTH 	= 4;
-	public static final int DEFAULT_HEIGHT 	= 4;
+	public static final int MIN_BORDER_SIZE = 4;
+	public static final int DEFAULT_WIDTH 	= MIN_BORDER_SIZE;
+	public static final int DEFAULT_HEIGHT 	= MIN_BORDER_SIZE;
 	
 	private boolean initialized;
 	private int width;
@@ -19,6 +20,11 @@ public class Board {
 	}
 	
 	public Board(int width, int height) {
+		
+		if(width < MIN_BORDER_SIZE)
+			width = MIN_BORDER_SIZE;
+		if(height < MIN_BORDER_SIZE)
+			height = MIN_BORDER_SIZE;
 		
 		reset(width, height);
 	}
@@ -77,7 +83,31 @@ public class Board {
 	
 	public void setValue(int value, int row, int column) {
 
+		setValue(value, row, column, false);
+	}
+	
+	public void setValue(int value, int row, int column, boolean shouldNotMerge) {
+
+		setValue(value, row, column, shouldNotMerge, false);
+	}
+	
+	public void setValue(int value, int row, int column, boolean shouldNotMerge, boolean justCreated) {
+		
 		squares[row][column].setValue(value);
+		squares[row][column].setNotMergeThisTurn(shouldNotMerge);
+		squares[row][column].setJustCreated(justCreated);
+	}
+	
+	public void endTurn() {
+		
+		for(int indexR = 0 ; indexR < getHeight() ; indexR++) {
+			
+			for(int indexC = 0 ; indexC < getWidth() ; indexC++) {
+				
+				squares[indexR][indexC].setNotMergeThisTurn(false);
+				squares[indexR][indexC].setJustCreated(false);
+			}
+		}
 	}
 
 	public void reset(int width, int height) {

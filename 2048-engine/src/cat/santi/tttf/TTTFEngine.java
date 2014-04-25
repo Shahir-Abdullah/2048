@@ -11,27 +11,34 @@ import cat.santi.tttf.exceptions.NotPow2ValueException;
 
 public class TTTFEngine {
 
+	public static final int MIN_BORDER_SIZE = Board.MIN_BORDER_SIZE;
 	public static final int DEFAULT_WIDTH 	= Board.DEFAULT_WIDTH;
 	public static final int DEFAULT_HEIGHT 	= Board.DEFAULT_HEIGHT;
 	public static final int VOID_VALUE 		= Square.VOID_VALUE;
 	
 	private static TTTFEngine instance = null;
-	private final Random random;
 	
-	private Board board;
+	private Random random = null;
+	private Board board = null;
+	private int score = 0;
+	private int turns = 0;
 	
 	private TTTFEngine() {
+
+		//- Initialize the random if needed
+		if(random == null)
+			random = new Random(System.currentTimeMillis());
 		
+		//- Create a new board
 		board = new Board();
-		random = new Random(System.currentTimeMillis());
 		
-		try {
-			
-			Point point = findRandomAvailableSquare();
-			createValueAtPosition(createRandomPow2Value(4), point.row, point.column);
-		} catch(NoAvailableSquaresException ex) {
-			
-		}
+		//- Clean state variables
+		score = 0;
+		turns = 0;
+		
+		//- Create two values to start
+		createValueAtPosition(createRandomPow2Value(findMaxValuePlaying(8)), findRandomAvailableSquare());
+		createValueAtPosition(createRandomPow2Value(findMaxValuePlaying(8)), findRandomAvailableSquare());
 	}
 	
 	public static synchronized TTTFEngine getInstance() {
@@ -41,29 +48,65 @@ public class TTTFEngine {
 		return instance;
 	}
 	
-	public boolean playToBottom() {
+	public boolean play(Direction direction) {
 		
-		//- TODO: IMPLEMENT
-//		for(int indexC = 0 ; indexC < board.getWidth() ; indexC++)
-//			board.getSquare(indexC, 0);
-		return hasMoreMovesAvailable();
+		switch (direction) {
+		
+		case TO_DOWN:
+			
+			return playToDown();
+		case TO_LEFT:
+			
+			return playToLeft();
+		case TO_RIGHT:
+			
+			return playToRight();
+		case TO_TOP:
+			
+			return playToTop();
+		default:
+			
+			return false;
+		}
 	}
 	
-	public boolean playToLeft() {
+	public boolean playToDown() {
 		
-		//- TODO: IMPLEMENT
-		return hasMoreMovesAvailable();
-	}
-	
-	public boolean playToRight() {
-		
-		//- TODO: IMPLEMENT
+		for(int indexR = board.getHeight() - 2 ; indexR >= 0 ; indexR--)
+			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++)
+				tryToMove(indexR, indexC, indexR + 1, indexC);
+			
+		endTurn();
 		return hasMoreMovesAvailable();
 	}
 	
 	public boolean playToTop() {
 		
-		//- TODO: IMPLEMENT
+		for(int indexR = 1 ; indexR < board.getHeight() ; indexR++)
+			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++)
+				tryToMove(indexR, indexC, indexR - 1, indexC);
+		
+		endTurn();
+		return hasMoreMovesAvailable();
+	}
+	
+	public boolean playToRight() {
+		
+		for(int indexC = board.getWidth() - 2 ; indexC >= 0 ; indexC--)
+			for(int indexR = 0 ; indexR < board.getHeight() ; indexR++)
+				tryToMove(indexR, indexC, indexR, indexC + 1);
+		
+		endTurn();
+		return hasMoreMovesAvailable();
+	}
+	
+	public boolean playToLeft() {
+
+		for(int indexC = 1 ; indexC < board.getWidth() ; indexC++)
+			for(int indexR = 0 ; indexR < board.getHeight() ; indexR++)
+				tryToMove(indexR, indexC, indexR, indexC - 1);
+		
+		endTurn();
 		return hasMoreMovesAvailable();
 	}
 	
@@ -72,10 +115,14 @@ public class TTTFEngine {
 		return Board.toIntMatrix(board);
 	}
 	
+	public int getTurns() {
+		
+		return turns;
+	}
+
 	public int getScore() {
 		
-		//- TODO: IMPLEMENT
-		return 0;
+		return score;
 	}
 	
 	public boolean hasMoreMovesAvailable() {
@@ -84,9 +131,90 @@ public class TTTFEngine {
 		return true;
 	}
 	
+	private void tryToMove(int fromRow, int fromColumn, int toRow, int toColumn) {
+		
+		Square fromSquare = null;
+		Square toSquare = null;
+		try {
+
+			//- Get involved items
+			fromSquare = board.getSquare(fromRow, fromColumn);
+			toSquare = board.getSquare(toRow, toColumn);
+		} catch(ArrayIndexOutOfBoundsException ex) {
+			
+			//- End of board reached, so do nothing more
+			return;
+		}
+		
+		//- Calculate direction (in case recursive call is needed)
+		Direction direction = null;
+		if(fromRow < toRow)
+			direction = Direction.TO_DOWN;
+		else if(fromRow > toRow)
+			direction = Direction.TO_TOP;
+		else if(fromColumn < toColumn)
+			direction = Direction.TO_RIGHT;
+		else if(fromColumn > toColumn)
+			direction = Direction.TO_LEFT;
+		
+		if(fromSquare.getValue() == VOID_VALUE) {
+			
+			//- No value on 'from', so do nothing
+		} else if(toSquare.isVoid()) {
+			
+			//- No value on 'to', so move (and try to move again)
+			board.setValue(fromSquare.getValue(), toRow, toColumn);
+			board.setValue(VOID_VALUE, fromRow, fromColumn);
+			
+			switch (direction) {
+			
+			case TO_DOWN:
+				
+				tryToMove(fromRow + 1, fromColumn, toRow + 1, toColumn);
+				break;
+			case TO_LEFT:
+				
+				tryToMove(fromRow, fromColumn - 1, toRow, toColumn - 1);
+				break;
+			case TO_RIGHT:
+				
+				tryToMove(fromRow, fromColumn + 1, toRow, toColumn + 1);
+				break;
+			case TO_TOP:
+				
+				tryToMove(fromRow - 1, fromColumn, toRow - 1, toColumn);
+				break;
+			}
+		} else if(toSquare.shouldNotMergeThisTurn()) {
+			
+			//- The 'to' square was already merged, so do nothing
+		} else if(fromSquare.getValue() == toSquare.getValue()) {
+			
+			//- Same value on 'from' and 'to', so move (and sum)
+			board.setValue(toSquare.getValue() * 2, toRow, toColumn, true);
+			board.setValue(VOID_VALUE, fromRow, fromColumn);
+		} else {
+			
+			//- Different values on 'from' and 'to', so do nothing
+		}
+	}
+	
+	private void endTurn() {
+		
+		board.endTurn();
+		turns++;
+		
+		createValueAtPosition(createRandomPow2Value(findMaxValuePlaying(8)), findRandomAvailableSquare());
+	}
+	
+	private void createValueAtPosition(int value, Point point) {
+		
+		createValueAtPosition(value, point.row, point.column);
+	}
+	
 	private void createValueAtPosition(int value, int row, int column) {
 		
-		board.setValue(value, row, column);
+		board.setValue(value, row, column, false, true);
 	}
 	
 	private int createRandomPow2Value(int max) throws NotPow2ValueException {
@@ -125,25 +253,68 @@ public class TTTFEngine {
 			
 			value /= 2;
 			count++;
-		} while(value >= 2 && value % 2 != 0);
+		} while(value >= 2 && value % 2 == 0);
 		return 0;
 	}
+	
+	private int findMaxValuePlaying(int maxAllowed) {
+		
+		int result = 2;
+		
+		for(int indexR = 0 ; indexR < board.getHeight(); indexR++)
+			for(int indexC = 0 ; indexC < board.getWidth(); indexC++)
+				if(board.getSquare(indexR, indexC).getValue() > result && board.getSquare(indexR, indexC).getValue() < maxAllowed)
+					result = board.getSquare(indexR, indexC).getValue();
+		
+		return result;
+	}
+	
+	public static enum Direction {
+		
+		TO_DOWN,
+		TO_LEFT,
+		TO_RIGHT,
+		TO_TOP;
+	}
+	
+	private static class Point {
+		
+		int row;
+		int column;
+		
+		public Point(int row, int column) {
+			
+			this.row = row;
+			this.column = column;
+		}
+	}
+	
+	//- ####################################################################################################
+	//- DEBUG
+	//- ####################################################################################################
 
-	public void __print() {
+	protected void __print() {
 		
-		int[][] values = Board.toIntMatrix(board);
-		
+		System.out.println(String.format("================== TURN : %4d ===================", getTurns() + 1));
 		for(int indexR = 0 ; indexR < board.getHeight() ; indexR++) {
 			
 			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++) {
 				
-				final int value = values[indexR][indexC];
+				final int value = board.getSquare(indexR, indexC).getValue();
+				final boolean isJustCreated = board.getSquare(indexR, indexC).isJustCreated();
 				
-				if(value != Square.VOID_VALUE)
-					System.out.print(value + " ");
-				else
-					System.out.print("· ");
+				if(value != Square.VOID_VALUE) {
+
+					if(isJustCreated)
+						System.out.print(String.format("[%04d]", value) + " ");
+					else
+						System.out.print(String.format(" %04d ", value) + " ");
+				} else{
+					
+					System.out.print(" ····  ");
+				}
 			}
+			System.out.println();
 			System.out.println();
 		}
 		System.out.println("==================================================");
