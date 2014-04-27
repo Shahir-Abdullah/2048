@@ -40,7 +40,7 @@ public class TTTFEngine {
 	public static final int DEFAULT_COLUMNS = MIN_BORDER_SIZE;
 	/** The default board height. */
 	public static final int DEFAULT_ROWS = MIN_BORDER_SIZE;
-	/** The default value of the greatest tile needed to win */
+	/** The default value of the greatest tile needed to win. */
 	public static final int DEFAULT_TILE_VALUE_TO_WIN = 2048;
 	/** Array defining the allowed values for newly created tiles. */
 	public static final int[] DEFAULT_ALLOWED_VALUES = {2, 4};
@@ -61,8 +61,6 @@ public class TTTFEngine {
 	
 	/** The game's current state. */
 	private State state = State.NOT_PREPARED;
-	/** Plays allowed for this turn. */
-	private boolean allowedDown = false, allowedTop = false, allowedRight = false, allowedLeft = false;
 	
 	/** Listener to notify about game state changes. */
 	private TTTFListener tttfListener = dummyTTTFListener;
@@ -211,7 +209,7 @@ public class TTTFEngine {
 				
 				tttfListener.onNotReady();
 				return false;
-			} else if(!allowedDown) {
+			} else if(!canPlayToDown()) {
 				
 				tttfListener.onDisallowedMove();
 				return false;
@@ -258,7 +256,7 @@ public class TTTFEngine {
 				
 				tttfListener.onNotReady();
 				return true;
-			} else if(!allowedTop) {
+			} else if(!canPlayToTop()) {
 				
 				tttfListener.onDisallowedMove();
 				return true;
@@ -305,7 +303,7 @@ public class TTTFEngine {
 				
 				tttfListener.onNotReady();
 				return true;
-			} else if(!allowedRight) {
+			} else if(!canPlayToRight()) {
 				
 				tttfListener.onDisallowedMove();
 				return true;
@@ -352,7 +350,7 @@ public class TTTFEngine {
 				
 				tttfListener.onNotReady();
 				return true;
-			} else if(!allowedLeft) {
+			} else if(!canPlayToLeft()) {
 				
 				tttfListener.onDisallowedMove();
 				return true;
@@ -497,7 +495,7 @@ public class TTTFEngine {
 	 * @return Will return <code>true</code> if the 'down' move can be made,
 	 * or <code>false</code> otherwise. 
 	 */
-	private boolean canMoveToDown() {
+	private boolean canPlayToDown() {
 		
 		return playToDown(true);
 	}
@@ -512,7 +510,7 @@ public class TTTFEngine {
 	 * @return Will return <code>true</code> if the 'top' move can be made,
 	 * or <code>false</code> otherwise. 
 	 */
-	private boolean canMoveToTop() {
+	private boolean canPlayToTop() {
 		
 		return playToTop(true);
 	}
@@ -527,7 +525,7 @@ public class TTTFEngine {
 	 * @return Will return <code>true</code> if the 'right' move can be made,
 	 * or <code>false</code> otherwise. 
 	 */
-	private boolean canMoveToRight() {
+	private boolean canPlayToRight() {
 		
 		return playToRight(true);
 	}
@@ -542,7 +540,7 @@ public class TTTFEngine {
 	 * @return Will return <code>true</code> if the 'left' move can be made,
 	 * or <code>false</code> otherwise. 
 	 */
-	private boolean canMoveToLeft() {
+	private boolean canPlayToLeft() {
 		
 		return playToLeft(true);
 	}
@@ -688,10 +686,6 @@ public class TTTFEngine {
 		this.score = 0;
 		this.turns = 0;
 		this.tileValueToWin = tileValueToWin;
-		this.allowedDown = true;
-		this.allowedTop = true;
-		this.allowedRight = true;
-		this.allowedLeft = true;
 		
 		//- Create two values to start
 		createTile(createRandomValue());
@@ -713,11 +707,6 @@ public class TTTFEngine {
 		if(findGreatestTile() >= tileValueToWin) {
 			//- The game is 'victory'
 			
-			allowedDown = false;
-			allowedTop = false;
-			allowedRight = false;
-			allowedLeft = false;
-			
 			tttfListener.onGameFinished(true, turns, score);
 			setState(State.VICTORY);
 		} else if(turnDone) {
@@ -727,13 +716,7 @@ public class TTTFEngine {
 			board.endTurn();
 			createTile(createRandomValue());
 			
-			//- Reset all allowed moves
-			allowedDown = canMoveToDown();
-			allowedTop = canMoveToTop();
-			allowedRight = canMoveToRight();
-			allowedLeft = canMoveToLeft();
-			
-			if(!allowedDown && !allowedTop && !allowedRight && !allowedLeft) {
+			if(!canPlayToDown() && !canPlayToTop() && !canPlayToRight() && !canPlayToLeft()) {
 				//- No more available moves. Game is over
 				
 				tttfListener.onGameFinished(false, turns, score);
@@ -1415,5 +1398,6 @@ public class TTTFEngine {
 	 * - Keep a registry of movements done, to be able to undo them.
 	 * - Save and load games.
 	 * - Create some kind of AI for auto-play | auto-suggest.
+	 * - Improve performance. (non-fatal issue atm)
 	 */
 }
