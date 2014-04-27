@@ -6,9 +6,8 @@ import java.io.InputStreamReader;
 
 import cat.santi.tttf.TTTFEngine;
 import cat.santi.tttf.TTTFEngine.Direction;
-import cat.santi.tttf.TTTFEngine.OnStateChangeListener;
-import cat.santi.tttf.TTTFEngine.OnTileChangeListener;
 import cat.santi.tttf.TTTFEngine.State;
+import cat.santi.tttf.TTTFEngine.TTTFListener;
 
 /**
  * Main test class, implementing the {@link TTTFEngine} listeners.
@@ -16,7 +15,7 @@ import cat.santi.tttf.TTTFEngine.State;
  * @author Santiago Gonzalez <santiago.gon.ber@gmail.com>
  */
 public class Main
-implements OnStateChangeListener, OnTileChangeListener {
+implements TTTFListener {
 
 	/**
 	 * First executed method. Meant just for testing purposes.
@@ -27,12 +26,11 @@ implements OnStateChangeListener, OnTileChangeListener {
 	public static void main(String[] args) {
 		
 		//- Prepare this test instance and option object
-		Main test = new Main();
+		Main main = new Main();
 		Option option = null;
 		
 		//- Settle listeners
-		TTTFEngine.getInstance().setOnStateChangeListener(test);
-		TTTFEngine.getInstance().setOnTileChangeListener(test);
+		TTTFEngine.getInstance().setTTTFListener(main);
 		
 		//- Prepare the game
 		TTTFEngine.getInstance().reset();
@@ -40,11 +38,11 @@ implements OnStateChangeListener, OnTileChangeListener {
 		//- Main game loop
 		do {
 			
-			//- Print the board and read the user option (blocking)
+			//- Print the (debug version of the) board and read the user option (blocking)
 			TTTFEngine.getInstance().printBoard();
-			option = test.readOption();
+			option = main.readOption();
 			
-			//- Perfom the user option
+			//- Perform the user option
 			switch (option) {
 
 			case PLAY_DOWN:
@@ -69,10 +67,12 @@ implements OnStateChangeListener, OnTileChangeListener {
 				
 				//- DO NOTHING
 			}
+			
+			//- Until the 'exit' option is picked
 		} while (!option.equals(Option.EXIT));
 		
 		//- Finish execution
-		System.out.println("Thanks for playing! ^_^");
+		System.out.println("Thanks for playing!");
 		System.exit(0);
 	}
 	
@@ -137,24 +137,42 @@ implements OnStateChangeListener, OnTileChangeListener {
 	@Override
 	public void onStateChange(State state) {
 		
+		//- Print information about this callback
 		System.out.println(" -- onStateChange - state: " + state.toString());
 	}
 	
 	@Override
 	public void onGameFinished(boolean victory, int turns, int score) {
 		
+		//- Print information about this callback
 		System.out.println(" -- onGameFinished - victoy: " + victory + " | turns: " + turns + " | score: " + score);
 	}
 	
 	@Override
 	public void onTileMoved(int srcRow, int srcColumn, int dstRow, int dstColumn, Direction direction, boolean merged) {
 		
+		//- Print information about this callback
 		System.out.println(" -- onTileMoved - srcRow: " + srcRow + " | srcColumn: " + srcColumn + " | dstRow: " + dstRow + " | dstColumn: " + dstColumn + " | direction: " + direction.toString() + " | merged: " + merged);
 	}
 	
 	@Override
 	public void onTileCreated(int row, int column, int value) {
 		
+		//- Print information about this callback
 		System.out.println(" -- onTileCreated - row: " + row + " | column: " + column + " | value: " + value);
+	}
+	
+	@Override
+	public void onNotReady() {
+		
+		//- Print information about this callback
+		System.out.println(" -- onNotReady");
+	}
+	
+	@Override
+	public void onDisallowedMove() {
+		
+		//- Print information about this callback
+		System.out.println(" -- onDisallowedMove");
 	}
 }

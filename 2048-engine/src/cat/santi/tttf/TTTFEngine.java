@@ -3,6 +3,7 @@ package cat.santi.tttf;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import cat.santi.tttf.exceptions.NoAvailableSquaresException;
 
@@ -17,7 +18,7 @@ import cat.santi.tttf.exceptions.NoAvailableSquaresException;
  * <p>
  * You should also settle this class' listeners in order to get instant
  * information about in-game events. Those listeners are
- * {@link #setOnStateChangeListener(OnStateChangeListener)} and
+ * {@link #setTTTFListener(TTTFListener)} and
  * {@link #setOnTileChangeListener(OnTileChangeListener)}.
  * 
  * @see #reset()
@@ -26,7 +27,7 @@ import cat.santi.tttf.exceptions.NoAvailableSquaresException;
  * @see #getTurns()
  * @see #getScore()
  * @see #hasMoreMovesAvailable()
- * @see #setOnStateChangeListener(OnStateChangeListener)
+ * @see #setTTTFListener(TTTFListener)
  * @see #setOnTileChangeListener(OnTileChangeListener)
  * @author Santiago Gonzalez <santiago.gon.ber@gmail.com>
  */
@@ -34,12 +35,14 @@ public class TTTFEngine {
 
 	/** The minimum allowed board size. */
 	public static final int MIN_BORDER_SIZE = 4;
+	/** Value returned when a board square has no value. */
+	public static final int VOID_VALUE = 0;
 	/** The default board width. */
 	public static final int DEFAULT_COLUMNS = MIN_BORDER_SIZE;
 	/** The default board height. */
 	public static final int DEFAULT_ROWS = MIN_BORDER_SIZE;
-	/** Value returned when a board square has no value. */
-	public static final int VOID_VALUE = 0;
+	/** The default value of the greatest tile needed to win */
+	private static final int DEFAULT_TILE_VALUE_TO_WIN = 16;
 	/** Array defining the allowed values for newly created tiles. */
 	public static final int[] DEFAULT_ALLOWED_VALUES = {2, 4};
 	
@@ -54,50 +57,35 @@ public class TTTFEngine {
 	private int score = -1;
 	/** The count of elapsed turns. */
 	private int turns = -1;
+	/** The value of the greatest tile needed to win */
+	private int tileValueToWin = -1;
 	
 	/** The game's current state. */
 	private State state = State.NOT_PREPARED;
+	/** Plays allowed for this turn. */
+	private boolean allowedDown = false, allowedTop = false, allowedRight = false, allowedLeft = false;
 	
 	/** Listener to notify about game state changes. */
-	private OnStateChangeListener stateChangeListener = dummyStateChangeListener;
-	/** Listener to notify about tile changes. */
-	private OnTileChangeListener tileChangeListener = dummyTileChangeListener;
-	
-	//- ####################################################################################################
-	//- DUMMY INSTANCE MEMBERS
-	//- ####################################################################################################
+	private TTTFListener tttfListener = dummyTTTFListener;
 	
 	/**
-	 * Dummy {@link OnStateChangeListener} to be used when none was explicitly
+	 * Dummy {@link TTTFListener} to be used when none was explicitly
 	 * been settled.
 	 */
-	private static final OnStateChangeListener dummyStateChangeListener = new OnStateChangeListener() {
+	private static final TTTFListener dummyTTTFListener = new TTTFListener() {
 		
 		@Override
-		public void onStateChange(State state) {
-			//- DO NOTHING
-		}
-		
-		public void onGameFinished(boolean victory, int turns, int score) {
-			//- DO NOTHING
-		};
-	};
-
-	/**
-	 * Dummy {@link OnTileChangeListener} to be used when none was explicitly
-	 * been settled.
-	 */
-	private static final OnTileChangeListener dummyTileChangeListener = new OnTileChangeListener() {
-		
+		public void onStateChange(State state) {}
 		@Override
-		public void onTileMoved(int srcRow, int srcColumn, int dstRow, int dstColumn, Direction direction, boolean merged) {
-			//- DO NOTHING
-		}
-		
+		public void onGameFinished(boolean victory, int turns, int score) {}
 		@Override
-		public void onTileCreated(int row, int column, int value) {
-			//- DO NOTHING
-		}
+		public void onTileMoved(int srcRow, int srcColumn, int dstRow, int dstColumn, Direction direction, boolean merged) {}
+		@Override
+		public void onTileCreated(int row, int column, int value) {}
+		@Override
+		public void onNotReady() {};
+		@Override
+		public void onDisallowedMove() {};
 	};
 	
 	/**
@@ -128,7 +116,7 @@ public class TTTFEngine {
 	
 	/**
 	 * Prepare this singleton for a new game, discarding any current changes,
-	 * they exist.
+	 * they exist, of {@link #DEFAULT_ROWS} and {@link #DEFAULT_COLUMNS} size.
 	 * <p>
 	 * This should be the first method called before playing any move, or
 	 * requesting board contents, as this will initialize the game.
@@ -141,7 +129,28 @@ public class TTTFEngine {
 	 */
 	public void reset() {
 		
-		init();
+		reset(DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_TILE_VALUE_TO_WIN);
+	}
+	
+	/**
+	 * Prepare this singleton for a new game, discarding any current changes,
+	 * they exist, of the given <i>rows</i> and <i>columns</i> size.
+	 * <p>
+	 * This should be the first method called before playing any move, or
+	 * requesting board contents, as this will initialize the game.
+	 * 
+	 * @param rows The amount of rows height.
+	 * @param columns The amount of columns width.
+	 * @param tileValueToWin The amount needed on any <i>tile</i> to win the game.
+	 * @see #getBoardValues()
+	 * @see #play(Direction)
+	 * @see #getTurns()
+	 * @see #getScore()
+	 * @see #hasMoreMovesAvailable()
+	 */
+	public void reset(int rows, int columns, int tileValueToWin) {
+		
+		init(rows, columns, tileValueToWin);
 	}
 	
 	/**
@@ -195,14 +204,26 @@ public class TTTFEngine {
 	 */
 	public boolean playToDown() {
 		
-		if(!state.equals(State.IDDLE))
-			return false;
+		if(!state.equals(State.IDDLE)) {
+			
+			tttfListener.onNotReady();
+			return true;
+		} else if(!allowedDown) {
+			
+			tttfListener.onDisallowedMove();
+			return true;
+		}
 		
-		setState(State.PLAY_TO_DOWN);
+		setState(State.PLAYING_DOWN);
 		
 		for(int indexR = board.getRows() - 2 ; indexR >= 0 ; indexR--)
-			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++)
-				tryToMove(indexR, indexC, indexR + 1, indexC);
+			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++) {
+				
+				PlayResult result = tryToMove(indexR, indexC, indexR + 1, indexC);
+				
+				if(result != null)
+					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_DOWN, result.merged);
+			}
 			
 		endTurn();
 		return hasMoreMovesAvailable();
@@ -218,14 +239,26 @@ public class TTTFEngine {
 	 */
 	public boolean playToTop() {
 		
-		if(!state.equals(State.IDDLE))
-			return false;
+		if(!state.equals(State.IDDLE)) {
+			
+			tttfListener.onNotReady();
+			return true;
+		} else if(!allowedTop) {
+			
+			tttfListener.onDisallowedMove();
+			return true;
+		}
 		
-		setState(State.PLAY_TO_TOP);
+		setState(State.PLAYING_TOP);
 		
 		for(int indexR = 1 ; indexR < board.getRows() ; indexR++)
-			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++)
-				tryToMove(indexR, indexC, indexR - 1, indexC);
+			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++) {
+				
+				PlayResult result = tryToMove(indexR, indexC, indexR - 1, indexC);
+				
+				if(result != null)
+					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_TOP, result.merged);
+			}
 		
 		endTurn();
 		return hasMoreMovesAvailable();
@@ -241,14 +274,26 @@ public class TTTFEngine {
 	 */
 	public boolean playToRight() {
 		
-		if(!state.equals(State.IDDLE))
-			return false;
+		if(!state.equals(State.IDDLE)) {
+			
+			tttfListener.onNotReady();
+			return true;
+		} else if(!allowedRight) {
+			
+			tttfListener.onDisallowedMove();
+			return true;
+		}
 		
-		setState(State.PLAY_TO_RIGHT);
+		setState(State.PLAYING_RIGHT);
 		
 		for(int indexC = board.getColumns() - 2 ; indexC >= 0 ; indexC--)
-			for(int indexR = 0 ; indexR < board.getRows() ; indexR++)
-				tryToMove(indexR, indexC, indexR, indexC + 1);
+			for(int indexR = 0 ; indexR < board.getRows() ; indexR++) {
+				
+				PlayResult result = tryToMove(indexR, indexC, indexR, indexC + 1);
+				
+				if(result != null)
+					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_RIGHT, result.merged);
+			}
 		
 		endTurn();
 		return hasMoreMovesAvailable();
@@ -264,14 +309,26 @@ public class TTTFEngine {
 	 */
 	public boolean playToLeft() {
 		
-		if(!state.equals(State.IDDLE))
-			return false;
+		if(!state.equals(State.IDDLE)) {
+			
+			tttfListener.onNotReady();
+			return true;
+		} else if(!allowedLeft) {
+			
+			tttfListener.onDisallowedMove();
+			return true;
+		}
 		
-		setState(State.PLAY_TO_LEFT);
+		setState(State.PLAYING_LEFT);
 
 		for(int indexC = 1 ; indexC < board.getColumns() ; indexC++)
-			for(int indexR = 0 ; indexR < board.getRows() ; indexR++)
-				tryToMove(indexR, indexC, indexR, indexC - 1);
+			for(int indexR = 0 ; indexR < board.getRows() ; indexR++) {
+				
+				PlayResult result = tryToMove(indexR, indexC, indexR, indexC - 1);
+				
+				if(result != null)
+					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_LEFT, result.merged);
+			}
 		
 		endTurn();
 		return hasMoreMovesAvailable();
@@ -339,8 +396,18 @@ public class TTTFEngine {
 	 */
 	public boolean hasMoreMovesAvailable() {
 		
-		//- TODO: IMPLEMENT
-		return true;
+		allowedDown = canMoveToDown();
+		allowedTop = canMoveToTop();
+		allowedRight = canMoveToRight();
+		allowedLeft = canMoveToLeft();
+		boolean result = allowedDown || allowedTop || allowedRight || allowedLeft;
+		
+		if(!state.equals(State.VICTORY) && !result) {
+			
+			setState(State.DEFEAT);
+			tttfListener.onGameFinished(false, turns, score);
+		}
+		return result;
 	}
 	
 	/**
@@ -369,7 +436,7 @@ public class TTTFEngine {
 			return "Game not prepared";
 		
 		StringBuilder builder = new StringBuilder();
-		builder.append(String.format("================== TURN : %4d ===================\n\n", getTurns() + 1));
+		builder.append(String.format("========== TURN : %4d | SCORE : %6d ==========\n\n", getTurns() + 1, score));
 		for(int indexR = 0 ; indexR < board.getRows() ; indexR++) {
 			
 			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++) {
@@ -400,6 +467,62 @@ public class TTTFEngine {
 	//- ####################################################################################################
 	
 	/**
+	 * Find out whether on not the {@link Direction#TO_DOWN} is a valid
+	 * movement.
+	 * <p>
+	 * <i>(A movement is valid if at least one change on the board tiles is
+	 * made due to trying to moving all tiles into that direction)</i>
+	 * 
+	 * @return Will return <code>true</code> if the 'down' move can be made,
+	 * or <code>false</code> otherwise. 
+	 */
+	private boolean canMoveToDown() {
+		return true;
+	}
+
+	/**
+	 * Find out whether on not the {@link Direction#TO_TOP} is a valid
+	 * movement.
+	 * <p>
+	 * <i>(A movement is valid if at least one change on the board tiles is
+	 * made due to trying to moving all tiles into that direction)</i>
+	 * 
+	 * @return Will return <code>true</code> if the 'top' move can be made,
+	 * or <code>false</code> otherwise. 
+	 */
+	private boolean canMoveToTop() {
+		return true;
+	}
+
+	/**
+	 * Find out whether on not the {@link Direction#TO_RIGHT} is a valid
+	 * movement.
+	 * <p>
+	 * <i>(A movement is valid if at least one change on the board tiles is
+	 * made due to trying to moving all tiles into that direction)</i>
+	 * 
+	 * @return Will return <code>true</code> if the 'right' move can be made,
+	 * or <code>false</code> otherwise. 
+	 */
+	private boolean canMoveToRight() {
+		return true;
+	}
+
+	/**
+	 * Find out whether on not the {@link Direction#TO_LEFT} is a valid
+	 * movement.
+	 * <p>
+	 * <i>(A movement is valid if at least one change on the board tiles is
+	 * made due to trying to moving all tiles into that direction)</i>
+	 * 
+	 * @return Will return <code>true</code> if the 'left' move can be made,
+	 * or <code>false</code> otherwise. 
+	 */
+	private boolean canMoveToLeft() {
+		return true;
+	}
+	
+	/**
 	 * Set the {@link State} of the game.
 	 * 
 	 * @param state The new {@link State} of the game.
@@ -408,7 +531,7 @@ public class TTTFEngine {
 		
 		this.state = state;
 		
-		stateChangeListener.onStateChange(state);
+		tttfListener.onStateChange(state);
 	}
 	
 	/**
@@ -419,8 +542,9 @@ public class TTTFEngine {
 	 * @param srcColumn The <i>tile</i>'s source column to be moved from.
 	 * @param dstRow The <i>tile</i>'s destiny row to be moved to.
 	 * @param dstColumn The <i>tile</i>'s destiny column to be moved to.
+	 * @return TODO
 	 */
-	private void tryToMove(int srcRow, int srcColumn, int dstRow, int dstColumn) {
+	private PlayResult tryToMove(int srcRow, int srcColumn, int dstRow, int dstColumn) {
 		
 		Tile fromSquare = null;
 		Tile toSquare = null;
@@ -431,8 +555,9 @@ public class TTTFEngine {
 			toSquare = board.getTile(dstRow, dstColumn);
 		} catch(ArrayIndexOutOfBoundsException ex) {
 			
-			//- End of board reached, so do nothing more
-			return;
+			//- Wall hit, so do nothing more
+			//- Return the PlayResult
+			return new PlayResult(srcRow, srcColumn, false);
 		}
 		
 		//- Calculate direction (in case recursive call is needed)
@@ -449,6 +574,7 @@ public class TTTFEngine {
 		if(fromSquare.getValue() == VOID_VALUE) {
 			
 			//- No value on 'from', so do nothing
+			return null;
 		} else if(toSquare.isVoid()) {
 			
 			//- No value on 'to', so move (and try to move again)
@@ -459,58 +585,86 @@ public class TTTFEngine {
 			
 			case TO_DOWN:
 				
-				tryToMove(srcRow + 1, srcColumn, dstRow + 1, dstColumn);
-				break;
+				return tryToMove(srcRow + 1, srcColumn, dstRow + 1, dstColumn);
 			case TO_LEFT:
 				
-				tryToMove(srcRow, srcColumn - 1, dstRow, dstColumn - 1);
-				break;
+				return tryToMove(srcRow, srcColumn - 1, dstRow, dstColumn - 1);
 			case TO_RIGHT:
 				
-				tryToMove(srcRow, srcColumn + 1, dstRow, dstColumn + 1);
-				break;
+				return tryToMove(srcRow, srcColumn + 1, dstRow, dstColumn + 1);
 			case TO_TOP:
 				
-				tryToMove(srcRow - 1, srcColumn, dstRow - 1, dstColumn);
-				break;
+				return tryToMove(srcRow - 1, srcColumn, dstRow - 1, dstColumn);
 			}
+			
+			//- note: will never get here (switch - default compiler ambiguous case)
+			return null;
 		} else if(toSquare.shouldNotMergeThisTurn()) {
 			
 			//- The 'to' square was already merged, so do nothing
+			//- Return the PlayResult
+			return new PlayResult(srcRow, srcColumn, false);
 		} else if(fromSquare.getValue() == toSquare.getValue()) {
 			
 			//- Same value on 'from' and 'to', so move (and sum)
 			board.setValue(toSquare.getValue() * 2, dstRow, dstColumn, true);
 			board.setValue(VOID_VALUE, srcRow, srcColumn);
+			
+			//- Add the new value as score
+			addScore(board.getTile(dstRow, dstColumn).value);
+			
+			//- Return the PlayResult
+			return new PlayResult(dstRow, dstColumn, true);
 		} else {
 			
 			//- Different values on 'from' and 'to', so do nothing
+			//- Return the PlayResult
+			return new PlayResult(srcRow, srcColumn, false);
 		}
 	}
 	
 	/**
-	 * Initialize a new game:
+	 * Add the given <i>score</i>.
+	 * 
+	 * @param score The amount of score to add.
+	 */
+	private void addScore(int score) {
+
+		this.score += score;
+	}
+	
+	/**
+	 * Initialize a new game, with the given <i>rows</i> height and <i>columns</i>
+	 * width:
 	 * <ul>
 	 * <li>Create a new {@link Random} object.</li>
 	 * <li>Create a new {@link Board} object.</li>
 	 * <li>Settle the <i>score</i> and <i>turns</i> to 0.</li>
 	 * <li>Create two <i>tiles</i> with value of 2 at random places.</li>
 	 * </ul>
+	 * @param rows The amount of rows height.
+	 * @param columns The amount of columns width.
+	 * @param tileValueToWin The amount needed on any <i>tile</i> to win the game.
 	 */
-	private void init() {
+	private void init(int rows, int columns, int tileValueToWin) {
 		
 		setState(State.PREPARING);
 		
 		//- Initialize the random if needed
-		if(random == null)
-			random = new Random(System.currentTimeMillis());
+		if(this.random == null)
+			this.random = new Random(System.currentTimeMillis());
 		
 		//- Create a new board
-		board = new Board();
+		this.board = new Board(rows, columns);
 		
 		//- Clean state variables
-		score = 0;
-		turns = 0;
+		this.score = 0;
+		this.turns = 0;
+		this.tileValueToWin = tileValueToWin;
+		this.allowedDown = true;
+		this.allowedTop = true;
+		this.allowedRight = true;
+		this.allowedLeft = true;
 		
 		//- Create two values to start
 		createTile(createRandomValue());
@@ -529,12 +683,34 @@ public class TTTFEngine {
 	 */
 	private void endTurn() {
 		
+		//- Call (required) Board's endTurn()
 		board.endTurn();
+		
+		//- Add one more turn
 		turns++;
 		
-		createTile(createRandomValue());
+		//- Reset all allowed moves
+		allowedDown = true;
+		allowedTop = true;
+		allowedRight = true;
+		allowedLeft = true;
 		
-		setState(State.IDDLE);
+		if(findGreatestTile() >= tileValueToWin) {
+			//- The game is 'victory'
+			
+			allowedDown = false;
+			allowedTop = false;
+			allowedRight = false;
+			allowedLeft = false;
+			
+			tttfListener.onGameFinished(true, turns, score);
+			setState(State.VICTORY);
+		} else {
+			//- The game is still going on
+
+			createTile(createRandomValue());
+			setState(State.IDDLE);
+		}
 	}
 	
 	/**
@@ -572,6 +748,8 @@ public class TTTFEngine {
 	private void createTileAtPosition(int value, int row, int column) {
 		
 		board.setValue(value, row, column, false, true);
+		
+		tttfListener.onTileCreated(row, column, value);
 	}
 	
 	/**
@@ -640,7 +818,6 @@ public class TTTFEngine {
 	 * 
 	 * @return The value of the greatest <i>tile</i> playing.
 	 */
-	@SuppressWarnings("unused")
 	private int findGreatestTile() {
 		
 		int result = 0;
@@ -673,13 +850,17 @@ public class TTTFEngine {
 		/** The game is preparing. Do not attempt to do plays. */
 		PREPARING,
 		/** Playing a DOWN movement. Do not attempt to do plays. */
-		PLAY_TO_DOWN,
+		PLAYING_DOWN,
 		/** Playing a LEFT movement. Do not attempt to do plays. */
-		PLAY_TO_LEFT,
+		PLAYING_LEFT,
 		/** Playing a RIGHT movement. Do not attempt to do plays. */
-		PLAY_TO_RIGHT,
+		PLAYING_RIGHT,
 		/** Playing a TOP movement. Do not attempt to do plays. */
-		PLAY_TO_TOP;
+		PLAYING_TOP,
+		/** The game ended in victory. */
+		VICTORY,
+		/** The game ended in defeat. */
+		DEFEAT;
 	}
 	
 	/**
@@ -726,6 +907,36 @@ public class TTTFEngine {
 	}
 	
 	/**
+	 * Convenience class wrapping a movement play result.
+	 * <p>
+	 * A {@link PlayResult} is conformed from a destiny row and column, as
+	 * well as a flag indicating if the move ended as a merge.
+	 */
+	private static class PlayResult {
+		
+		/** The ending row for the play. */
+		int row;
+		/** The ending column for the play. */
+		int column;
+		/** Flag indicating if the play ended with a merge. */
+		boolean merged;
+		
+		/**
+		 * Constructor for {@link PlayResult}.
+		 * 
+		 * @param row The ending row.
+		 * @param column The ending column.
+		 * @param merged Set to <code>true</code> if the play ended with a merge.
+		 */
+		public PlayResult(int row, int column, boolean merged) {
+			
+			this.row = row;
+			this.column = column;
+			this.merged = merged;
+		}
+	}
+	
+	/**
 	 * Convenience class to reference a playing board.
 	 */
 	private class Board {
@@ -740,6 +951,7 @@ public class TTTFEngine {
 		 * Will create an empty board, with {@link TTTFEngine#DEFAULT_ROWS} and
 		 * {@link TTTFEngine#DEFAULT_COLUMNS} size.
 		 */
+		@SuppressWarnings("unused")
 		Board() {
 			
 			this(DEFAULT_ROWS, DEFAULT_COLUMNS);
@@ -995,6 +1207,16 @@ public class TTTFEngine {
 	 */
 	public class Turn {
 		
+		private UUID gameUUID;
+		private int turnNumber;
+		private Direction play;
+		
+		Turn(UUID gameUUID, int turnNumber, Direction play) {
+			
+			this.gameUUID = gameUUID;
+			this.turnNumber = turnNumber;
+			this.play = play;
+		}
 	}
 	
 	//- ####################################################################################################
@@ -1002,24 +1224,24 @@ public class TTTFEngine {
 	//- ####################################################################################################
 	
 	/**
-	 * Set the {@link OnStateChangeListener} for this singleton.
+	 * Set the {@link TTTFListener} for this singleton.
 	 * 
-	 * @param l The {@link OnStateChangeListener} to settle.
+	 * @param l The {@link TTTFListener} to settle.
 	 */
-	public void setOnStateChangeListener(OnStateChangeListener l) {
+	public void setTTTFListener(TTTFListener l) {
 		
 		if(l == null)
-			l = dummyStateChangeListener;
+			l = dummyTTTFListener;
 		
-		stateChangeListener = l;
+		tttfListener = l;
 	}
 	
 	/**
-	 * Remove the {@link OnStateChangeListener} for this singleton.
+	 * Remove the {@link TTTFListener} for this singleton.
 	 */
-	public void removeOnStateChangeListener() {
+	public void removeTTTFListener() {
 		
-		setOnStateChangeListener(null);
+		setTTTFListener(null);
 	}
 	
 	/**
@@ -1027,15 +1249,15 @@ public class TTTFEngine {
 	 * 
 	 * @return The current listener for game state changes.
 	 */
-	public OnStateChangeListener getOnStateChangeListener() {
+	public TTTFListener getTTTFListener() {
 		
-		return stateChangeListener;
+		return tttfListener;
 	}
 	
 	/**
 	 * Listener to notify whenever a change on the <i>game state</i> occurred.
 	 */
-	public interface OnStateChangeListener {
+	public interface TTTFListener {
 		
 		/**
 		 * Triggered whenever there's any change on the <i>game state</i>.
@@ -1052,43 +1274,15 @@ public class TTTFEngine {
 		 * @param score The score achieved.
 		 */
 		public void onGameFinished(boolean victory, int turns, int score);
-	}
-	
-	/**
-	 * Set the {@link OnTileChangeListener} for this singleton.
-	 * 
-	 * @param l The {@link OnTileChangeListener} to settle.
-	 */
-	public void setOnTileChangeListener(OnTileChangeListener l) {
 		
-		if(l == null)
-			l = dummyTileChangeListener;
-		
-		tileChangeListener = l;
-	}
-	
-	/**
-	 * Remove the {@link OnTileChangeListener} for this singleton.
-	 */
-	public void removeOnTileChangeListener() {
-		
-		setOnStateChangeListener(null);
-	}
-	
-	/**
-	 * Get the current listener for tile changes.
-	 * 
-	 * @return The current listener for tile changes.
-	 */
-	public OnTileChangeListener getOnTileChangeListener() {
-		
-		return tileChangeListener;
-	}
-	
-	/**
-	 * Listener to notify whenever a change on any <i>tile</i> occurred.
-	 */
-	public interface OnTileChangeListener {
+		/**
+		 * Triggered whenever a new <i>tile</i> is created.
+		 * 
+		 * @param row The creation row.
+		 * @param column The creation column.
+		 * @param value The value of the <i>tile</i>.
+		 */
+		public void onTileCreated(int row, int column, int value);
 		
 		/**
 		 * Triggered whenever a <i>tile</i> was moved.
@@ -1101,22 +1295,24 @@ public class TTTFEngine {
 		 * @param merged If this movement triggered a merge (<code>true</code>) or not (<code>false</code>).
 		 */
 		public void onTileMoved(int srcRow, int srcColumn, int dstRow, int dstColumn, Direction direction, boolean merged);
+
+		/**
+		 * Triggered whenever an action that requires the game to be ready
+		 * is tried to be performed, but without the game being ready.
+		 */
+		public void onNotReady();
 		
 		/**
-		 * Triggered whenever a new <i>tile</i> is created.
-		 * 
-		 * @param row The creation row.
-		 * @param column The creation column.
-		 * @param value The value of the <i>tile</i>.
+		 * Triggered whenever the user tried to play a non-allowed move.
 		 */
-		public void onTileCreated(int row, int column, int value);
+		public void onDisallowedMove();
 	}
 	
 	/*
 	 * Features still TODO:
-	 * - Make victory and defeat conditions.
 	 * - Implement the "hasMoreMovesAvailable method.
-	 * - Implement the scoring logic.
+	 * - More game modes (normal, infinite, time attack...).
 	 * - Keep a registry of movements done, to be able to undo them.
+	 * - Save and load games.
 	 */
 }
