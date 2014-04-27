@@ -131,6 +131,36 @@ public class TTTFEngine {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("================== TURN : %4d ===================\n\n", getTurns() + 1));
+		for(int indexR = 0 ; indexR < board.getHeight() ; indexR++) {
+			
+			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++) {
+				
+				final int value = board.getSquare(indexR, indexC).getValue();
+				final boolean isJustCreated = board.getSquare(indexR, indexC).isJustCreated();
+				
+				builder.append("  ");
+				if(value != Square.VOID_VALUE) {
+
+					if(isJustCreated)
+						builder.append(String.format("[%04d]", value) + " ");
+					else
+						builder.append(String.format(" %04d ", value) + " ");
+				} else{
+					
+					builder.append(" ____  ");
+				}
+			}
+			builder.append("\n\n");
+		}
+		builder.append("==================================================\n");
+		return builder.toString();
+	}
+	
 	private void tryToMove(int fromRow, int fromColumn, int toRow, int toColumn) {
 		
 		Square fromSquare = null;
@@ -289,36 +319,8 @@ public class TTTFEngine {
 		}
 	}
 	
-	//- ####################################################################################################
-	//- DEBUG
-	//- ####################################################################################################
-
 	protected void __print() {
 		
-		System.out.println(String.format("================== TURN : %4d ===================", getTurns() + 1));
-		System.out.println();
-		for(int indexR = 0 ; indexR < board.getHeight() ; indexR++) {
-			
-			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++) {
-				
-				final int value = board.getSquare(indexR, indexC).getValue();
-				final boolean isJustCreated = board.getSquare(indexR, indexC).isJustCreated();
-				
-				System.out.print("  ");
-				if(value != Square.VOID_VALUE) {
-
-					if(isJustCreated)
-						System.out.print(String.format("[%04d]", value) + " ");
-					else
-						System.out.print(String.format(" %04d ", value) + " ");
-				} else{
-					
-					System.out.print(" ____  ");
-				}
-			}
-			System.out.println();
-			System.out.println();
-		}
-		System.out.println("==================================================");
+		System.out.println(toString());
 	}
 }
