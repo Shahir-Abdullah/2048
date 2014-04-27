@@ -47,19 +47,19 @@ implements TTTFListener {
 
 			case PLAY_DOWN:
 				
-				TTTFEngine.getInstance().play(Direction.TO_DOWN);
+				TTTFEngine.getInstance().play(Direction.TO_DOWN, false);
 				break;
 			case PLAY_LEFT:
 				
-				TTTFEngine.getInstance().play(Direction.TO_LEFT);
+				TTTFEngine.getInstance().play(Direction.TO_LEFT, false);
 				break;
 			case PLAY_RIGHT:
 				
-				TTTFEngine.getInstance().play(Direction.TO_RIGHT);
+				TTTFEngine.getInstance().play(Direction.TO_RIGHT, false);
 				break;
 			case PLAY_TOP:
 				
-				TTTFEngine.getInstance().play(Direction.TO_TOP);
+				TTTFEngine.getInstance().play(Direction.TO_TOP, false);
 				break;
 			case JUST_PRINT:
 			case EXIT:

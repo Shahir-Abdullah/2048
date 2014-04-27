@@ -26,7 +26,6 @@ import cat.santi.tttf.exceptions.NoAvailableSquaresException;
  * @see #play(Direction)
  * @see #getTurns()
  * @see #getScore()
- * @see #hasMoreMovesAvailable()
  * @see #setTTTFListener(TTTFListener)
  * @see #setOnTileChangeListener(OnTileChangeListener)
  * @author Santiago Gonzalez <santiago.gon.ber@gmail.com>
@@ -42,7 +41,7 @@ public class TTTFEngine {
 	/** The default board height. */
 	public static final int DEFAULT_ROWS = MIN_BORDER_SIZE;
 	/** The default value of the greatest tile needed to win */
-	private static final int DEFAULT_TILE_VALUE_TO_WIN = 16;
+	public static final int DEFAULT_TILE_VALUE_TO_WIN = 2048;
 	/** Array defining the allowed values for newly created tiles. */
 	public static final int[] DEFAULT_ALLOWED_VALUES = {2, 4};
 	
@@ -125,7 +124,6 @@ public class TTTFEngine {
 	 * @see #play(Direction)
 	 * @see #getTurns()
 	 * @see #getScore()
-	 * @see #hasMoreMovesAvailable()
 	 */
 	public void reset() {
 		
@@ -146,7 +144,6 @@ public class TTTFEngine {
 	 * @see #play(Direction)
 	 * @see #getTurns()
 	 * @see #getScore()
-	 * @see #hasMoreMovesAvailable()
 	 */
 	public void reset(int rows, int columns, int tileValueToWin) {
 		
@@ -164,6 +161,7 @@ public class TTTFEngine {
 	 * This method is a wrapper for a more specific plays: {@link #playToDown()},
 	 * {@link #playToTop()}, {@link #playToRight()} and {@link #playToLeft()}. 
 	 * 
+	 * @param simulate Set <code>true</code> for just simulating the move.
 	 * @param direction The direction to move all the <i>tiles</i> towards.
 	 * @return Will return <code>true</code> if the player has more possible
 	 * moves, or <code>false</code> if that was the last one possible to make.
@@ -172,22 +170,22 @@ public class TTTFEngine {
 	 * @see #playToRight()
 	 * @see #playToLeft()
 	 */
-	public boolean play(Direction direction) {
+	public boolean play(Direction direction, boolean simulate) {
 		
 		switch (direction) {
 		
 		case TO_DOWN:
 			
-			return playToDown();
+			return playToDown(simulate);
 		case TO_LEFT:
 			
-			return playToLeft();
+			return playToLeft(simulate);
 		case TO_RIGHT:
 			
-			return playToRight();
+			return playToRight(simulate);
 		case TO_TOP:
 			
-			return playToTop();
+			return playToTop(simulate);
 		default:
 			
 			return false;
@@ -198,140 +196,188 @@ public class TTTFEngine {
 	 * Move all tiles to down, combining the colliding tiles that have the same
 	 * value.
 	 * 
+	 * @param simulate Set <code>true</code> for just simulating the move.
 	 * @return Will return <code>true</code> if the player has more possible
 	 * moves, or <code>false</code> if that was the last one possible to make.
 	 * @see #play(Direction)
 	 */
-	public boolean playToDown() {
+	public boolean playToDown(boolean simulate) {
+
+		Board board = !simulate ? this.board : Board.clone(this.board);
 		
-		if(!state.equals(State.IDDLE)) {
+		if(!simulate) {
 			
-			tttfListener.onNotReady();
-			return true;
-		} else if(!allowedDown) {
+			if(!state.equals(State.IDDLE)) {
+				
+				tttfListener.onNotReady();
+				return false;
+			} else if(!allowedDown) {
+				
+				tttfListener.onDisallowedMove();
+				return false;
+			}
 			
-			tttfListener.onDisallowedMove();
-			return true;
+			setState(State.PLAYING_DOWN);
 		}
 		
-		setState(State.PLAYING_DOWN);
-		
+		boolean moveDone = false;
 		for(int indexR = board.getRows() - 2 ; indexR >= 0 ; indexR--)
 			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++) {
 				
-				PlayResult result = tryToMove(indexR, indexC, indexR + 1, indexC);
+				PlayResult result = tryToMove(board, indexR, indexC, indexR + 1, indexC, simulate);
 				
-				if(result != null)
-					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_DOWN, result.merged);
+				if(result != null && (indexR != result.row || indexC != result.column)) {
+					
+					if(!simulate)
+						tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_DOWN, result.merged);
+					moveDone = true;
+				}
 			}
 			
-		endTurn();
-		return hasMoreMovesAvailable();
+		if(!simulate)
+			endTurn(moveDone);
+		return moveDone;
 	}
 	
 	/**
 	 * Move all tiles to top, combining the colliding tiles that have the same
 	 * value.
 	 * 
+	 * @param simulate Set <code>true</code> for just simulating the move.
 	 * @return Will return <code>true</code> if the player has more possible
 	 * moves, or <code>false</code> if that was the last one possible to make.
 	 * @see #play(Direction)
 	 */
-	public boolean playToTop() {
+	public boolean playToTop(boolean simulate) {
 		
-		if(!state.equals(State.IDDLE)) {
+		Board board = !simulate ? this.board : Board.clone(this.board);
+		
+		if(!simulate) {
 			
-			tttfListener.onNotReady();
-			return true;
-		} else if(!allowedTop) {
+			if(!state.equals(State.IDDLE)) {
+				
+				tttfListener.onNotReady();
+				return true;
+			} else if(!allowedTop) {
+				
+				tttfListener.onDisallowedMove();
+				return true;
+			}
 			
-			tttfListener.onDisallowedMove();
-			return true;
+			setState(State.PLAYING_TOP);
 		}
 		
-		setState(State.PLAYING_TOP);
-		
+		boolean moveDone = false;
 		for(int indexR = 1 ; indexR < board.getRows() ; indexR++)
 			for(int indexC = 0 ; indexC < board.getColumns() ; indexC++) {
 				
-				PlayResult result = tryToMove(indexR, indexC, indexR - 1, indexC);
+				PlayResult result = tryToMove(board, indexR, indexC, indexR - 1, indexC, simulate);
 				
-				if(result != null)
-					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_TOP, result.merged);
+				if(result != null && (indexR != result.row || indexC != result.column)) {
+					
+					if(!simulate)
+						tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_TOP, result.merged);
+					moveDone = true;
+				}
 			}
 		
-		endTurn();
-		return hasMoreMovesAvailable();
+		if(!simulate)
+			endTurn(moveDone);
+		return moveDone;
 	}
 
 	/**
 	 * Move all tiles to right, combining the colliding tiles that have the same
 	 * value.
 	 * 
+	 * @param simulate Set <code>true</code> for just simulating the move.
 	 * @return Will return <code>true</code> if the player has more possible
 	 * moves, or <code>false</code> if that was the last one possible to make.
 	 * @see #play(Direction)
 	 */
-	public boolean playToRight() {
+	public boolean playToRight(boolean simulate) {
 		
-		if(!state.equals(State.IDDLE)) {
+		Board board = !simulate ? this.board : Board.clone(this.board);
+		
+		if(!simulate) {
 			
-			tttfListener.onNotReady();
-			return true;
-		} else if(!allowedRight) {
+			if(!state.equals(State.IDDLE)) {
+				
+				tttfListener.onNotReady();
+				return true;
+			} else if(!allowedRight) {
+				
+				tttfListener.onDisallowedMove();
+				return true;
+			}
 			
-			tttfListener.onDisallowedMove();
-			return true;
+			setState(State.PLAYING_RIGHT);
 		}
 		
-		setState(State.PLAYING_RIGHT);
-		
+		boolean moveDone = false;
 		for(int indexC = board.getColumns() - 2 ; indexC >= 0 ; indexC--)
 			for(int indexR = 0 ; indexR < board.getRows() ; indexR++) {
 				
-				PlayResult result = tryToMove(indexR, indexC, indexR, indexC + 1);
+				PlayResult result = tryToMove(board, indexR, indexC, indexR, indexC + 1, simulate);
 				
-				if(result != null)
-					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_RIGHT, result.merged);
+				if(result != null && (indexR != result.row || indexC != result.column)) {
+					
+					if(!simulate)
+						tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_RIGHT, result.merged);
+					moveDone = true;
+				}
 			}
 		
-		endTurn();
-		return hasMoreMovesAvailable();
+		if(!simulate)
+			endTurn(moveDone);
+		return moveDone;
 	}
 	
 	/**
 	 * Move all tiles to left, combining the colliding tiles that have the same
 	 * value.
 	 * 
+	 * @param simulate Set <code>true</code> for just simulating the move.
 	 * @return Will return <code>true</code> if the player has more possible
 	 * moves, or <code>false</code> if that was the last one possible to make.
 	 * @see #play(Direction)
 	 */
-	public boolean playToLeft() {
+	public boolean playToLeft(boolean simulate) {
 		
-		if(!state.equals(State.IDDLE)) {
+		Board board = !simulate ? this.board : Board.clone(this.board);
+		
+		if(!simulate) {
 			
-			tttfListener.onNotReady();
-			return true;
-		} else if(!allowedLeft) {
+			if(!state.equals(State.IDDLE)) {
+				
+				tttfListener.onNotReady();
+				return true;
+			} else if(!allowedLeft) {
+				
+				tttfListener.onDisallowedMove();
+				return true;
+			}
 			
-			tttfListener.onDisallowedMove();
-			return true;
+			setState(State.PLAYING_LEFT);
 		}
-		
-		setState(State.PLAYING_LEFT);
 
+		boolean moveDone = false;
 		for(int indexC = 1 ; indexC < board.getColumns() ; indexC++)
 			for(int indexR = 0 ; indexR < board.getRows() ; indexR++) {
 				
-				PlayResult result = tryToMove(indexR, indexC, indexR, indexC - 1);
+				PlayResult result = tryToMove(board, indexR, indexC, indexR, indexC - 1, simulate);
 				
-				if(result != null)
-					tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_LEFT, result.merged);
+				if(result != null && (indexR != result.row || indexC != result.column)) {
+					
+					if(!simulate)
+						tttfListener.onTileMoved(indexR, indexC, result.row, result.column, Direction.TO_LEFT, result.merged);
+					moveDone = true;
+				}
 			}
 		
-		endTurn();
-		return hasMoreMovesAvailable();
+		if(!simulate)
+			endTurn(moveDone);
+		return moveDone;
 	}
 	
 	/**
@@ -383,31 +429,6 @@ public class TTTFEngine {
 	public State getState() {
 		
 		return state;
-	}
-	
-	/**
-	 * NOT YET IMPLEMENTED.
-	 * <p>
-	 * Check the board to see if the player can still perform more movements. (That is
-	 * the game being initialized, still not won and with available space to play or
-	 * merge tiles).
-	 * 
-	 * @return Will return <code>true</code> if the player can still move.
-	 */
-	public boolean hasMoreMovesAvailable() {
-		
-		allowedDown = canMoveToDown();
-		allowedTop = canMoveToTop();
-		allowedRight = canMoveToRight();
-		allowedLeft = canMoveToLeft();
-		boolean result = allowedDown || allowedTop || allowedRight || allowedLeft;
-		
-		if(!state.equals(State.VICTORY) && !result) {
-			
-			setState(State.DEFEAT);
-			tttfListener.onGameFinished(false, turns, score);
-		}
-		return result;
 	}
 	
 	/**
@@ -477,7 +498,8 @@ public class TTTFEngine {
 	 * or <code>false</code> otherwise. 
 	 */
 	private boolean canMoveToDown() {
-		return true;
+		
+		return playToDown(true);
 	}
 
 	/**
@@ -491,7 +513,8 @@ public class TTTFEngine {
 	 * or <code>false</code> otherwise. 
 	 */
 	private boolean canMoveToTop() {
-		return true;
+		
+		return playToTop(true);
 	}
 
 	/**
@@ -505,7 +528,8 @@ public class TTTFEngine {
 	 * or <code>false</code> otherwise. 
 	 */
 	private boolean canMoveToRight() {
-		return true;
+		
+		return playToRight(true);
 	}
 
 	/**
@@ -519,7 +543,8 @@ public class TTTFEngine {
 	 * or <code>false</code> otherwise. 
 	 */
 	private boolean canMoveToLeft() {
-		return true;
+		
+		return playToLeft(true);
 	}
 	
 	/**
@@ -538,13 +563,15 @@ public class TTTFEngine {
 	 * Try to move the <i>tile</i> contained at <code>(srcRow, srcColumn)</code> to
 	 * the position at <code>(dstRow, dstColumn)</code>.
 	 * 
+	 * @param board The board to apply changed onto.
 	 * @param srcRow The <i>tile</i>'s source row to be moved from.
 	 * @param srcColumn The <i>tile</i>'s source column to be moved from.
 	 * @param dstRow The <i>tile</i>'s destiny row to be moved to.
 	 * @param dstColumn The <i>tile</i>'s destiny column to be moved to.
-	 * @return TODO
+	 * @param simulate Set <code>true</code> for just simulating the move.
+	 * @return The {@link PlayResult} of the move.
 	 */
-	private PlayResult tryToMove(int srcRow, int srcColumn, int dstRow, int dstColumn) {
+	private PlayResult tryToMove(Board board, int srcRow, int srcColumn, int dstRow, int dstColumn, boolean simulate) {
 		
 		Tile fromSquare = null;
 		Tile toSquare = null;
@@ -585,16 +612,16 @@ public class TTTFEngine {
 			
 			case TO_DOWN:
 				
-				return tryToMove(srcRow + 1, srcColumn, dstRow + 1, dstColumn);
+				return tryToMove(board, srcRow + 1, srcColumn, dstRow + 1, dstColumn, simulate);
 			case TO_LEFT:
 				
-				return tryToMove(srcRow, srcColumn - 1, dstRow, dstColumn - 1);
+				return tryToMove(board, srcRow, srcColumn - 1, dstRow, dstColumn - 1, simulate);
 			case TO_RIGHT:
 				
-				return tryToMove(srcRow, srcColumn + 1, dstRow, dstColumn + 1);
+				return tryToMove(board, srcRow, srcColumn + 1, dstRow, dstColumn + 1, simulate);
 			case TO_TOP:
 				
-				return tryToMove(srcRow - 1, srcColumn, dstRow - 1, dstColumn);
+				return tryToMove(board, srcRow - 1, srcColumn, dstRow - 1, dstColumn, simulate);
 			}
 			
 			//- note: will never get here (switch - default compiler ambiguous case)
@@ -681,19 +708,7 @@ public class TTTFEngine {
 	 * <li>Create one <i>tile</i> with an allowed value at a random place.</li>
 	 * </ul>
 	 */
-	private void endTurn() {
-		
-		//- Call (required) Board's endTurn()
-		board.endTurn();
-		
-		//- Add one more turn
-		turns++;
-		
-		//- Reset all allowed moves
-		allowedDown = true;
-		allowedTop = true;
-		allowedRight = true;
-		allowedLeft = true;
+	private void endTurn(boolean turnDone) {
 		
 		if(findGreatestTile() >= tileValueToWin) {
 			//- The game is 'victory'
@@ -705,10 +720,35 @@ public class TTTFEngine {
 			
 			tttfListener.onGameFinished(true, turns, score);
 			setState(State.VICTORY);
-		} else {
-			//- The game is still going on
-
+		} else if(turnDone) {
+			//- The turn was completed successfully
+			
+			//- Call (required) Board's endTurn() and create a new tile
+			board.endTurn();
 			createTile(createRandomValue());
+			
+			//- Reset all allowed moves
+			allowedDown = canMoveToDown();
+			allowedTop = canMoveToTop();
+			allowedRight = canMoveToRight();
+			allowedLeft = canMoveToLeft();
+			
+			if(!allowedDown && !allowedTop && !allowedRight && !allowedLeft) {
+				//- No more available moves. Game is over
+				
+				tttfListener.onGameFinished(false, turns, score);
+				setState(State.DEFEAT);
+			} else {
+				//- Game is not over yet
+
+				//- Add one more turn
+				turns++;
+				setState(State.IDDLE);
+			}
+		} else {
+			//- Couldn't perform the play this turn
+			
+			tttfListener.onDisallowedMove();
 			setState(State.IDDLE);
 		}
 	}
@@ -939,7 +979,7 @@ public class TTTFEngine {
 	/**
 	 * Convenience class to reference a playing board.
 	 */
-	private class Board {
+	private static class Board {
 		
 		private int rows;
 		private int columns;
@@ -982,6 +1022,30 @@ public class TTTFEngine {
 			for(int indexR = 0 ; indexR < getRows() ; indexR++)
 				for(int indexC = 0 ; indexC < getColumns() ; indexC++)
 					tiles[indexR][indexC] = new Tile();
+		}
+		
+		/**
+		 * Constructor for {@link Board}.
+		 * 
+		 * @param source Will create a copy of the given {@link Board}.
+		 */
+		Board(Board source) {
+			
+			this.rows = source.rows;
+			this.columns = source.columns;
+			
+			this.tiles = new Tile[getRows()][getColumns()];
+			for(int indexR = 0 ; indexR < getRows() ; indexR++)
+				for(int indexC = 0 ; indexC < getColumns() ; indexC++)
+					tiles[indexR][indexC] = Tile.clone(source.getTile(indexR, indexC));
+		}
+		
+		/**
+		 * Return a copy of this {@link Board}.
+		 */
+		public static Board clone(Board board) {
+			
+			return new Board(board);
 		}
 
 		/**
@@ -1105,7 +1169,7 @@ public class TTTFEngine {
 	/**
 	 * Convenience class to reference the <i>tiles</i> contained on the board.
 	 */
-	private class Tile {
+	private static class Tile {
 		
 		/** The integer value. For a non-settled value, it will be {@link TTTFEngine#VOID_VALUE}. */
 		private int value;
@@ -1122,6 +1186,26 @@ public class TTTFEngine {
 			setValue(VOID_VALUE);
 			setJustCreated(false);
 			setNotMergeThisTurn(false);
+		}
+		
+		/**
+		 * Constructor for {@link Tile}.
+		 * 
+		 * @param source Will create a copy of the given {@link Tile}.
+		 */
+		Tile(Tile source) {
+			
+			this.value = source.value;
+			this.justCreated = source.justCreated;
+			this.notMergeThisTurn = source.notMergeThisTurn;
+		}
+		
+		/**
+		 * Return a copy of this {@link Tile}.
+		 */
+		public static Tile clone(Tile tile) {
+			
+			return new Tile(tile);
 		}
 
 		/**
@@ -1204,18 +1288,35 @@ public class TTTFEngine {
 	
 	/**
 	 * Container for everything that happened on a play turn.
+	 * 
+	 * TODO: IMPLEMENT
 	 */
+	@SuppressWarnings("unused")
 	public class Turn {
 		
+		/** The game {@link UUID}. */
 		private UUID gameUUID;
+		/** The turn number. */
 		private int turnNumber;
-		private Direction play;
+		/** The {@link Direction} played. */
+		private Direction playDirection;
+		/** The resulting {@link PlayResult}. */
+		ArrayList<PlayResult> playList;
 		
-		Turn(UUID gameUUID, int turnNumber, Direction play) {
+		/**
+		 * Constructor for {@link Turn}.
+		 * 
+		 * @param gameUUID The game {@link UUID}.
+		 * @param turnNumber The turn number.
+		 * @param playDirection The play direction.
+		 * @param playList the resulting {@link PlayResult}.
+		 */
+		Turn(UUID gameUUID, int turnNumber, Direction playDirection, ArrayList<PlayResult> playList) {
 			
 			this.gameUUID = gameUUID;
 			this.turnNumber = turnNumber;
-			this.play = play;
+			this.playDirection = playDirection;
+			this.playList = playList;
 		}
 	}
 	
@@ -1310,9 +1411,9 @@ public class TTTFEngine {
 	
 	/*
 	 * Features still TODO:
-	 * - Implement the "hasMoreMovesAvailable method.
 	 * - More game modes (normal, infinite, time attack...).
 	 * - Keep a registry of movements done, to be able to undo them.
 	 * - Save and load games.
+	 * - Create some kind of AI for auto-play | auto-suggest.
 	 */
 }
