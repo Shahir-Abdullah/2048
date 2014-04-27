@@ -61,7 +61,11 @@ implements TTTFListener {
 				
 				TTTFEngine.getInstance().play(Direction.TO_TOP, false);
 				break;
-			case JUST_PRINT:
+			case RESET:
+				
+				TTTFEngine.getInstance().reset();
+				break;
+			case SKIP:
 			case EXIT:
 			default:
 				
@@ -86,14 +90,24 @@ implements TTTFListener {
 		try {
 			
 			//- Print the available options
-			System.out.print("1 -> down | 2 -> left | 3 -> right | 4 -> top | 5 -> print | 0 -> exit: ");
+			System.out.println("1 -> DOWN | 2 -> LEFT | 3 -> RIGHT | 4 -> TOP ||| 8 -> skip | 9 -> reset | 0 -> exit");
+			System.out.print("Your option: ");
 			
 			//- Read the user option
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String line = br.readLine();
 			
 			//- Parse the given integer as an option
-			return Option.values()[Integer.parseInt(line)];
+			switch (Integer.parseInt(line)) {
+			case 1:  return Option.PLAY_DOWN;
+			case 2:  return Option.PLAY_LEFT;
+			case 3:  return Option.PLAY_RIGHT;
+			case 4:  return Option.PLAY_TOP;
+			case 9:  return prompt("You are about to reset the game. Are you sure?", Option.RESET);
+			case 0:  return prompt("Do you really want to exit the game?", Option.EXIT);
+			case 8:
+			default: return Option.SKIP;
+			}
 		} catch(IOException ex) {
 			//- The option couldn't be read due to an I/O problem.
 			
@@ -110,7 +124,26 @@ implements TTTFListener {
 			System.out.println("Invalid option, please try again");
 			return readOption();
 		}
-		return Option.EXIT;
+		return Option.SKIP;
+	}
+	
+	private Option prompt(String text, Option positive) {
+		
+		System.out.print(text + " (yes/no) : ");
+		
+		try {
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String line = br.readLine();
+			
+			if(line != null && !line.equals("") && line.toLowerCase().equals("yes"))
+				return positive;
+		} catch (IOException e) {
+			
+			System.out.println("I/O Exception, sorry but we must abort execution");
+			System.exit(0);
+		}
+		return Option.SKIP;
 	}
 	
 	/**
@@ -128,8 +161,10 @@ implements TTTFListener {
 		PLAY_RIGHT,
 		/** Play a TOP movement. */
 		PLAY_TOP,
-		/** Print the board contents. */
-		JUST_PRINT;
+		/** Skip the turn. */
+		SKIP,
+		/** Reset the game, starting a new one. */
+		RESET;
 	}
 	
 	//- GAME LISTENER TRIGGERS
