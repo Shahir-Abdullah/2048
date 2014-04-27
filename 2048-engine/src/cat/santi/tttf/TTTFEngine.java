@@ -319,6 +319,16 @@ public class TTTFEngine {
 	}
 	
 	/**
+	 * Get the game {@link State}.
+	 * 
+	 * @return The game {@link State}.
+	 */
+	public State getState() {
+		
+		return state;
+	}
+	
+	/**
 	 * NOT YET IMPLEMENTED.
 	 * <p>
 	 * Check the board to see if the player can still perform more movements. (That is
@@ -1006,6 +1016,16 @@ public class TTTFEngine {
 	}
 	
 	/**
+	 * Get the current listener for game state changes.
+	 * 
+	 * @return The current listener for game state changes.
+	 */
+	public OnStateChangeListener getOnStateChangeListener() {
+		
+		return stateChangeListener;
+	}
+	
+	/**
 	 * Listener to notify whenever a change on the <i>game state</i> occurred.
 	 */
 	public interface OnStateChangeListener {
@@ -1046,6 +1066,16 @@ public class TTTFEngine {
 	public void removeOnTileChangeListener() {
 		
 		setOnStateChangeListener(null);
+	}
+	
+	/**
+	 * Get the current listener for tile changes.
+	 * 
+	 * @return The current listener for tile changes.
+	 */
+	public OnTileChangeListener getOnTileChangeListener() {
+		
+		return tileChangeListener;
 	}
 	
 	/**
