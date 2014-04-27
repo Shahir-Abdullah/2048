@@ -5,13 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import cat.santi.tttf.TTTFEngine.Direction;
+import cat.santi.tttf.TTTFEngine.OnStateChangeListener;
+import cat.santi.tttf.TTTFEngine.State;
 
-public class Test {
+public class Test
+implements OnStateChangeListener {
 
 	public static void main(String[] args) {
 		
 		Test test = new Test();
 		Option option = null;
+		
+		TTTFEngine.getInstance().setOnStateChangeListener(test);
+		
 		do {
 			
 			TTTFEngine.getInstance().__print();
@@ -81,5 +87,11 @@ public class Test {
 		PLAY_TOP,
 		JUST_PRINT,
 		INVALID;
+	}
+
+	@Override
+	public void onStateChange(State state) {
+		
+		System.out.println(" -- STATE: " + state.toString());
 	}
 }

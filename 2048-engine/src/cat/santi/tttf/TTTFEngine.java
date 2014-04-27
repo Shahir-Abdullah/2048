@@ -23,6 +23,17 @@ public class TTTFEngine {
 	private int score = 0;
 	private int turns = 0;
 	
+	private OnStateChangeListener stateChangeListener = dummyStateChangeListener;
+	
+	private static final OnStateChangeListener dummyStateChangeListener = new OnStateChangeListener() {
+		
+		@Override
+		public void onStateChange(State state) {
+			
+			//- DO NOTHING
+		}
+	};
+	
 	private TTTFEngine() {
 
 		//- Initialize the random if needed
@@ -72,6 +83,8 @@ public class TTTFEngine {
 	
 	public boolean playToDown() {
 		
+		stateChangeListener.onStateChange(State.PLAY_TO_DOWN);
+		
 		for(int indexR = board.getHeight() - 2 ; indexR >= 0 ; indexR--)
 			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++)
 				tryToMove(indexR, indexC, indexR + 1, indexC);
@@ -81,6 +94,8 @@ public class TTTFEngine {
 	}
 	
 	public boolean playToTop() {
+		
+		stateChangeListener.onStateChange(State.PLAY_TO_TOP);
 		
 		for(int indexR = 1 ; indexR < board.getHeight() ; indexR++)
 			for(int indexC = 0 ; indexC < board.getWidth() ; indexC++)
@@ -92,6 +107,8 @@ public class TTTFEngine {
 	
 	public boolean playToRight() {
 		
+		stateChangeListener.onStateChange(State.PLAY_TO_RIGHT);
+		
 		for(int indexC = board.getWidth() - 2 ; indexC >= 0 ; indexC--)
 			for(int indexR = 0 ; indexR < board.getHeight() ; indexR++)
 				tryToMove(indexR, indexC, indexR, indexC + 1);
@@ -101,6 +118,8 @@ public class TTTFEngine {
 	}
 	
 	public boolean playToLeft() {
+		
+		stateChangeListener.onStateChange(State.PLAY_TO_LEFT);
 
 		for(int indexC = 1 ; indexC < board.getWidth() ; indexC++)
 			for(int indexR = 0 ; indexR < board.getHeight() ; indexR++)
@@ -235,6 +254,8 @@ public class TTTFEngine {
 		turns++;
 		
 		createValueAtPosition(createRandomPow2Value(findMaxValuePlaying(8)), findRandomAvailableSquare());
+		
+		stateChangeListener.onStateChange(State.IDDLE);
 	}
 	
 	private void createValueAtPosition(int value, Point point) {
@@ -299,6 +320,15 @@ public class TTTFEngine {
 		return result;
 	}
 	
+	public static enum State {
+		
+		IDDLE,
+		PLAY_TO_DOWN,
+		PLAY_TO_LEFT,
+		PLAY_TO_RIGHT,
+		PLAY_TO_TOP;
+	}
+	
 	public static enum Direction {
 		
 		TO_DOWN,
@@ -322,5 +352,27 @@ public class TTTFEngine {
 	protected void __print() {
 		
 		System.out.println(toString());
+	}
+	
+	//- ####################################################################################################
+	//- INTERFACES
+	//- ####################################################################################################
+	
+	public void setOnStateChangeListener(OnStateChangeListener l) {
+		
+		if(l == null)
+			l = dummyStateChangeListener;
+		
+		stateChangeListener = l;
+	}
+	
+	public void removeOnStateChangeListener() {
+		
+		setOnStateChangeListener(null);
+	}
+	
+	public interface OnStateChangeListener {
+		
+		public void onStateChange(State state);
 	}
 }
