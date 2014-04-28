@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cat.santi.android.tttf.views.TTTFSquareTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tttf__grid_item_tile__tv_value"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_gravity="center"
+    android:background="@drawable/tttf__shape_tile_0_border"
+    android:gravity="center"
+    android:textSize="28sp"
+    android:textStyle="bold" />

@@ -22,7 +22,7 @@ import cat.santi.tttf.exceptions.NoAvailableSquaresException;
  * {@link #setOnTileChangeListener(OnTileChangeListener)}.
  * 
  * @see #reset()
- * @see #getBoardValues()
+ * @see #getBoardTiles()
  * @see #play(Direction)
  * @see #getTurns()
  * @see #getScore()
@@ -118,7 +118,7 @@ public class TTTFEngine {
 	 * This should be the first method called before playing any move, or
 	 * requesting board contents, as this will initialize the game.
 	 * 
-	 * @see #getBoardValues()
+	 * @see #getBoardTiles()
 	 * @see #play(Direction)
 	 * @see #getTurns()
 	 * @see #getScore()
@@ -138,7 +138,7 @@ public class TTTFEngine {
 	 * @param rows The amount of rows height.
 	 * @param columns The amount of columns width.
 	 * @param tileValueToWin The amount needed on any <i>tile</i> to win the game.
-	 * @see #getBoardValues()
+	 * @see #getBoardTiles()
 	 * @see #play(Direction)
 	 * @see #getTurns()
 	 * @see #getScore()
@@ -389,7 +389,7 @@ public class TTTFEngine {
 	 * 
 	 * @return A matrix of {@link Tile}s, representing the actual board contents.
 	 */
-	public Tile[][] getBoardValues() {
+	public Tile[][] getBoardTiles() {
 		
 		if(state.equals(State.NOT_PREPARED))
 			return null;
@@ -427,6 +427,72 @@ public class TTTFEngine {
 	public State getState() {
 		
 		return state;
+	}
+	
+	/**
+	 * Get the number of rows (height) that the board have, filled or empty.
+	 * 
+	 * @return The total number of rows on the board.
+	 */
+	public int getBoardRows() {
+		
+		return board.rows;
+	}
+	
+	/**
+	 * Get the number of columns (width) that the board have, filled or empty.
+	 * 
+	 * @return The total number of columns on the board.
+	 */
+	public int getBoardColumns() {
+		
+		return board.columns;
+	}
+	
+	/**
+	 * Get the total amount of tiles that the board have, filled or empty.
+	 * 
+	 * @return The total number of tiles on the board.
+	 */
+	public int getBoardSize() {
+	
+		return getBoardRows() * getBoardColumns();
+	}
+	
+	/**
+	 * Return A COPY of the {@link Tile}s that form a row at the given index.
+	 * <p>
+	 * Do not perform modifications on the {@link Tile}s returned by this method.
+	 * 
+	 * @param row The row index to get the {@link Tile}s from.
+	 * @return A COPY of the row at the given index.
+	 */
+	public Tile[] getBoardRow(int row) {
+	
+		Tile[] result = new Tile[getBoardColumns()];
+		
+		for(int indexC = 0 ; indexC < getBoardColumns() ; indexC++)
+			result[indexC] = Tile.clone(board.getTiles()[row][indexC]);
+		
+		return result;
+	}
+	
+	/**
+	 * Return A COPY of the {@link Tile}s that form a column at the given index.
+	 * <p>
+	 * Do not perform modifications on the {@link Tile}s returned by this method.
+	 * 
+	 * @param column The column index to get the {@link Tile}s from.
+	 * @return A COPY of the column at the given index.
+	 */
+	public Tile[] getBoardColumn(int column) {
+		
+		Tile[] result = new Tile[getBoardRows()];
+		
+		for(int indexR = 0 ; indexR < getBoardRows() ; indexR++)
+			result[indexR] = Tile.clone(board.getTiles()[indexR][column]);
+		
+		return result;
 	}
 	
 	/**
@@ -908,7 +974,7 @@ public class TTTFEngine {
 	/**
 	 * Convenience class to reference a 2D point.
 	 */
-	private static class Point {
+	public static class Point {
 		
 		/** The row. */
 		int row;
@@ -935,7 +1001,7 @@ public class TTTFEngine {
 	 * A {@link PlayResult} is conformed from a destiny row and column, as
 	 * well as a flag indicating if the move ended as a merge.
 	 */
-	private static class PlayResult {
+	public static class PlayResult {
 		
 		/** The ending row for the play. */
 		int row;
@@ -962,7 +1028,7 @@ public class TTTFEngine {
 	/**
 	 * Convenience class to reference a playing board.
 	 */
-	private static class Board {
+	public static class Board {
 		
 		private int rows;
 		private int columns;
@@ -974,7 +1040,6 @@ public class TTTFEngine {
 		 * Will create an empty board, with {@link TTTFEngine#DEFAULT_ROWS} and
 		 * {@link TTTFEngine#DEFAULT_COLUMNS} size.
 		 */
-		@SuppressWarnings("unused")
 		Board() {
 			
 			this(DEFAULT_ROWS, DEFAULT_COLUMNS);
@@ -1152,7 +1217,7 @@ public class TTTFEngine {
 	/**
 	 * Convenience class to reference the <i>tiles</i> contained on the board.
 	 */
-	private static class Tile {
+	public static class Tile {
 		
 		/** The integer value. For a non-settled value, it will be {@link TTTFEngine#VOID_VALUE}. */
 		private int value;
