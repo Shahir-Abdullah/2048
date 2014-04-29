@@ -19,6 +19,22 @@
         android:layout_margin="4dp"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/tttf__fragment_main__tv_game_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tttf__fragment_main__tv_score"
+        android:layout_margin="4dp"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tttf__fragment_main__tv_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tttf__fragment_main__tv_game_state"
+        android:layout_margin="4dp"
+        android:textSize="16sp" />
+
     <cat.santi.android.tttf.views.TTTFTilesGridView
         android:id="@+id/tttf__fragment_main__gv_tiles"
         android:layout_width="wrap_content"
