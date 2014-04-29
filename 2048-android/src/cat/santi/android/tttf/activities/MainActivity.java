@@ -20,6 +20,7 @@ implements MainFragmentCallbacks {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(R.layout.activity_main, savedInstanceState);
+		configureActionBar(getString(R.string.ffft__main__title));
 	}
 	
 	@Override
@@ -27,11 +28,6 @@ implements MainFragmentCallbacks {
 		super.onResume();
 		
 		mSounds = TTTFPreferences.Sounds.getInstance().load(true);
-	}
-	
-	@Override
-	protected void configureActionBar() {
-		
 	}
 
 	@Override

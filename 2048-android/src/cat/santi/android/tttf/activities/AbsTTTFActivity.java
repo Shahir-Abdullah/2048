@@ -3,6 +3,7 @@ package cat.santi.android.tttf.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import cat.santi.android.tttf.R;
 import cat.santi.android.tttf.commons.TTTFConstants;
 
 public abstract class AbsTTTFActivity extends ActionBarActivity {
@@ -13,7 +14,6 @@ public abstract class AbsTTTFActivity extends ActionBarActivity {
 	protected void onCreate(int layoutResID, Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		configureActionBar();
 		parseExtras(getIntent());
 		restoreState(savedInstanceState);
 		setContentView(layoutResID);
@@ -28,7 +28,6 @@ public abstract class AbsTTTFActivity extends ActionBarActivity {
 		super.onNewIntent(intent);
 		setIntent(intent);
 		
-		configureActionBar();
 		parseExtras(getIntent());
 		getViews();
 		init();
@@ -40,7 +39,13 @@ public abstract class AbsTTTFActivity extends ActionBarActivity {
 		saveState(outState);
 	}
 	
-	protected abstract void configureActionBar();
+	protected void configureActionBar(String title) {
+		
+		if(title == null)
+			title = getString(R.string.ffft__app_name);
+		
+		getSupportActionBar().setTitle(title);
+	}
 	
 	protected abstract void parseExtras(Intent intent);
 	

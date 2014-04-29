@@ -126,29 +126,29 @@ implements TileAdapterCallbacks, TilesGridViewCallbacks, TTTFListener {
 	@Override
 	public void onPlayedRight() {
 
-		TTTFEngine.getInstance().play(Direction.TO_RIGHT, false);
-		mCallbacks.onUserPlay();
+		if(TTTFEngine.getInstance().play(Direction.TO_RIGHT, false))
+			mCallbacks.onUserPlay();
 	}
 
 	@Override
 	public void onPlayedLeft() {
 		
-		TTTFEngine.getInstance().play(Direction.TO_LEFT, false);
-		mCallbacks.onUserPlay();
+		if(TTTFEngine.getInstance().play(Direction.TO_LEFT, false))
+			mCallbacks.onUserPlay();
 	}
 
 	@Override
 	public void onPlayedDown() {
 		
-		TTTFEngine.getInstance().play(Direction.TO_DOWN, false);
-		mCallbacks.onUserPlay();
+		if(TTTFEngine.getInstance().play(Direction.TO_DOWN, false))
+			mCallbacks.onUserPlay();
 	}
 
 	@Override
 	public void onPlayedTop() {
 		
-		TTTFEngine.getInstance().play(Direction.TO_TOP, false);
-		mCallbacks.onUserPlay();
+		if(TTTFEngine.getInstance().play(Direction.TO_TOP, false))
+			mCallbacks.onUserPlay();
 	}
 
 	@Override

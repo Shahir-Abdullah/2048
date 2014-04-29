@@ -2,6 +2,7 @@ package cat.santi.android.tttf.commons;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import cat.santi.android.tttf.R;
 
 public class TTTFSoundManager {
@@ -31,9 +32,23 @@ public class TTTFSoundManager {
 			
 			mMediaPlayer.pause();
 			mMediaPlayer.stop();
+			mMediaPlayer.release();
+			mMediaPlayer = null;
 		}
 		
 		mMediaPlayer = MediaPlayer.create(context, R.raw.slide);
+		mMediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+			
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				
+				if(mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+					
+					mMediaPlayer.release();
+					mMediaPlayer = null;
+				}
+			}
+		});
 		mMediaPlayer.start();
 	}
 	
