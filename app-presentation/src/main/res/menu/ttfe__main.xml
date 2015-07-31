@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/ttfe__menu_action_reset"
+        android:icon="@drawable/ttfe__ic_action_reset"
+        android:orderInCategory="1"
+        android:title="@string/ttfe__action_reset"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/ttfe__menu_action_sounds"
+        android:orderInCategory="99"
+        android:title="@string/ttfe__action_sounds_on"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/ttfe__menu_action_settings"
+        android:orderInCategory="100"
+        android:title="@string/ttfe__action_settings"
+        android:showAsAction="never"/>
+
+</menu>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TTFE__AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
+
+    <style name="TTFE__AppTheme" parent="TTFE__AppBaseTheme"/>
+
+</resources>

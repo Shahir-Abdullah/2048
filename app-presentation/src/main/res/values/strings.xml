@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ttfe__app_name">2048 for Android</string>
+    <string name="ttfe__action_reset">Reset</string>
+    <string name="ttfe__action_settings">Settings</string>
+    <string name="ttfe__action_sounds_on">Disable sound</string>
+    <string name="ttfe__action_sounds_off">Enable sound</string>
+    <string name="ttfe__main__title">2048 for Android</string>
+    <string name="ttfe__main__turns">Moves: %1$s</string>
+    <string name="ttfe__main___score">Score: %1$s</string>
+
+</resources>
