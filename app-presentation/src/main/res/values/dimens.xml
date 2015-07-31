@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <dimen name="ttfe__grid_item_size">85dp</dimen>
+    <dimen name="ttfe__grid_item_text_size">28sp</dimen>
+
 </resources>

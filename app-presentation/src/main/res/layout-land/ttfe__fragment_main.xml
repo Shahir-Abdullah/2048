@@ -3,10 +3,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <cat.santi.ttfe.view.TilesGridView
+        android:id="@+id/ttfe__fragment_main__gv_tiles"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:columnWidth="100dp"
+        android:gravity="center"
+        android:horizontalSpacing="4dp"
+        android:numColumns="4"
+        android:padding="4dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dp"/>
+
     <ImageView
+        android:id="@+id/ttfe__fragment_main__iv_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
@@ -16,7 +31,8 @@
         android:id="@+id/ttfe__fragment_main__tv_turn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/ttfe__fragment_main__iv_logo"
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
         android:layout_margin="4dp"
         android:textSize="20sp"/>
 
@@ -25,6 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_turn"
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
         android:layout_margin="4dp"
         android:textSize="20sp"/>
 
@@ -33,6 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_score"
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
         android:layout_margin="4dp"
         android:textSize="16sp"/>
 
@@ -41,20 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_game_state"
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
         android:layout_margin="4dp"
         android:textSize="16sp"/>
-
-    <cat.santi.ttfe.view.TilesGridView
-        android:id="@+id/ttfe__fragment_main__gv_tiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:columnWidth="100dp"
-        android:gravity="center"
-        android:horizontalSpacing="4dp"
-        android:numColumns="4"
-        android:padding="4dp"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="4dp"/>
 
 </RelativeLayout>

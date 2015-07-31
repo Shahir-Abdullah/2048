@@ -14,7 +14,7 @@ public class SoundManager {
 
     private static final int MAX_STREAMS = 2;
 
-    private static SoundManager mInstance = null;
+    private static SoundManager sInstance = null;
 
     private SoundPool mSoundPool = null;
     private HashMap<Sound, Integer> mSoundMap = null;
@@ -48,9 +48,9 @@ public class SoundManager {
 
     public static synchronized SoundManager getInstance(Context context) {
 
-        if (mInstance == null)
-            mInstance = new SoundManager(context);
-        return mInstance;
+        if (sInstance == null)
+            sInstance = new SoundManager(context);
+        return sInstance;
     }
 
     public static synchronized void onResume(Context context) {
@@ -69,6 +69,7 @@ public class SoundManager {
         mSoundPool.release();
         mSoundPool = null;
         mSoundMap = null;
+        sInstance = null; // Dirty, but working
     }
 
     private void loadSounds(Context context) {

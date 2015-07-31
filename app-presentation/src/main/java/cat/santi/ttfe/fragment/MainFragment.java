@@ -22,19 +22,31 @@ public class MainFragment extends AbstractFragment implements
         Listener {
 
     private static final String TAG = MainFragment.class.getSimpleName();
+    private static final String STATE_MOVES = "STATE_MOVES";
+    private static final String STATE_SCORE = "STATE_SCORE";
+    private static final String STATE_GAME_STATE = "STATE_GAME_STATE";
+    private static final String STATE_STATUS = "STATE_STATUS";
 
-    private TextView mTVTurn;
+    private TextView mTVMoves;
     private TextView mTVScore;
     private TextView mTVGameState;
     private TextView mTVStatus;
     private TilesGridView mGVTiles;
     private TileAdapter mTileAdapter;
 
+    private String // Auxiliary strings to carry data across state
+            auxMovesText = null,
+            auxScoreText = null,
+            auxStatusText = null,
+            auxGameStateText = null;
+
     private MainFragmentCallbacks mCallbacks = null;
 
     public static MainFragment newInstance() {
 
-        return new MainFragment();
+        MainFragment instance = new MainFragment();
+        instance.setRetainInstance(true);
+        return instance;
     }
 
     @Override
@@ -58,6 +70,7 @@ public class MainFragment extends AbstractFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return onCreateView(R.layout.ttfe__fragment_main, inflater, container, savedInstanceState);
     }
 
@@ -88,11 +101,11 @@ public class MainFragment extends AbstractFragment implements
     @Override
     protected void getViews(View fragmentView) {
 
-        mTVTurn = (TextView) fragmentView.findViewById(R.id.tttf__fragment_main__tv_turn);
-        mTVScore = (TextView) fragmentView.findViewById(R.id.tttf__fragment_main__tv_score);
-        mTVGameState = (TextView) fragmentView.findViewById(R.id.tttf__fragment_main__tv_game_state);
-        mTVStatus = (TextView) fragmentView.findViewById(R.id.tttf__fragment_main__tv_status);
-        mGVTiles = (TilesGridView) fragmentView.findViewById(R.id.tttf__fragment_main__gv_tiles);
+        mTVMoves = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_turn);
+        mTVScore = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_score);
+        mTVGameState = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_game_state);
+        mTVStatus = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_status);
+        mGVTiles = (TilesGridView) fragmentView.findViewById(R.id.ttfe__fragment_main__gv_tiles);
     }
 
     @Override
@@ -107,24 +120,30 @@ public class MainFragment extends AbstractFragment implements
         mGVTiles.setAdapter(mTileAdapter);
         mGVTiles.setTilesGridViewCallbacks(this);
 
-        mTVTurn.setText(getString(R.string.ttfe__main__turns, 0));
-        mTVScore.setText(getString(R.string.ttfe__main___score, 0));
-        mTVGameState.setText("Waiting for user imput...");
-        mTVStatus.setText("Good luck!");
+        initViews();
     }
 
     @Override
     protected void saveState(Bundle outState) {
-        // Do nothing
+
+        outState.putString(STATE_MOVES, mTVMoves.getText().toString());
+        outState.putString(STATE_SCORE, mTVScore.getText().toString());
+        outState.putString(STATE_GAME_STATE, mTVGameState.getText().toString());
+        outState.putString(STATE_STATUS, mTVStatus.getText().toString());
     }
 
     @Override
     protected void restoreState(Bundle savedInstanceState) {
-        // Do nothing
+
+        auxMovesText = savedInstanceState.getString(STATE_MOVES, "");
+        auxScoreText = savedInstanceState.getString(STATE_SCORE, "");
+        auxGameStateText = savedInstanceState.getString(STATE_GAME_STATE, "");
+        auxStatusText = savedInstanceState.getString(STATE_STATUS, "");
     }
 
     @Override
     public void onPlayed(Direction direction) {
+
         if (Engine.getInstance().play(direction, false))
             if (mCallbacks != null)
                 mCallbacks.onUserPlay(direction);
@@ -137,8 +156,7 @@ public class MainFragment extends AbstractFragment implements
             if (mTileAdapter != null)
                 mTileAdapter.notifyDataSetChanged();
 
-        if (mTVGameState != null)
-            mTVGameState.setText("State: " + state.toString());
+        setState(state);
     }
 
     @Override
@@ -147,53 +165,87 @@ public class MainFragment extends AbstractFragment implements
         if (mTileAdapter != null)
             mTileAdapter.notifyDataSetChanged();
 
-        if (mTVStatus != null)
-            mTVStatus.setText(victory ? "Congratulations, you've WON!" : "Sorry, you were defeated!");
+        setStatus(victory ? getString(R.string.ttfe__you_win) : getString(R.string.ttfe__you_lose));
     }
 
     @Override
     public void onTileCreated(int row, int column, int value) {
-
+        // Do nothing
     }
 
     @Override
     public void onTileMoved(int srcRow, int srcColumn, int dstRow, int dstColumn, Direction direction, boolean merged) {
-
+        // Do nothing
     }
 
     @Override
     public void onNotReady() {
 
-        if (mTVStatus != null)
-            mTVStatus.setText("Not ready yet...");
+        setStatus(getString(R.string.ttfe__main_status_not_ready));
     }
 
     @Override
     public void onDisallowedMove() {
 
-        if (mTVStatus != null)
-            mTVStatus.setText("Movement not allowed!");
+        setStatus(getString(R.string.ttfe__main_status_disallowed_move));
     }
 
     @Override
-    public void onTurnChanged(int turn) {
+    public void onTurnChanged(int moves) {
 
-        if (mTVTurn != null)
-            mTVTurn.setText(getString(R.string.ttfe__main__turns, turn));
-
-        if (mTVStatus != null)
-            mTVStatus.setText(null);
+        setMoves(moves);
+        setStatus(null);
     }
 
     @Override
     public void onScoreChanged(int score) {
 
+        setScore(score);
+    }
+
+    public void setMoves(int moves) {
+
+        if (mTVMoves != null)
+            mTVMoves.setText(getString(R.string.ttfe__main__moves, moves));
+    }
+
+    public void setScore(int score) {
+
         if (mTVScore != null)
-            mTVScore.setText(getString(R.string.ttfe__main___score, score));
+            mTVScore.setText(getString(R.string.ttfe__main__score, score));
+    }
+
+    public void setState(State state) {
+
+        if (mTVGameState != null)
+            mTVGameState.setText(getString(R.string.ttfe__main_state, state.toString()));
+    }
+
+    public void setStatus(String status) {
+
+        if (mTVStatus != null)
+            mTVStatus.setText(status);
     }
 
     public interface MainFragmentCallbacks {
 
         void onUserPlay(Direction direction);
+    }
+
+    private void initViews() {
+
+        mTVMoves.setText(auxMovesText != null ?
+                auxMovesText : getString(R.string.ttfe__main__moves, 0));
+        mTVScore.setText(auxScoreText != null ?
+                auxScoreText : getString(R.string.ttfe__main__score, 0));
+        mTVGameState.setText(auxGameStateText != null ?
+                auxGameStateText : getString(R.string.ttfe__state_waiting));
+        mTVStatus.setText(auxStatusText != null ?
+                auxStatusText : getString(R.string.ttfe__status_good_luck));
+
+        auxMovesText = null;
+        auxScoreText = null;
+        auxGameStateText = null;
+        auxStatusText = null;
     }
 }

@@ -56,7 +56,7 @@ public class MainActivity extends AbstractActivity implements
         Engine.getInstance().reset();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.tttf__activity_main__container, MainFragment.newInstance())
+                .replace(R.id.ttfe__activity_main__container, MainFragment.newInstance())
                 .commit();
     }
 

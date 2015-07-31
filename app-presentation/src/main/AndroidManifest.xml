@@ -10,8 +10,7 @@
         android:theme="@style/TTFE__AppTheme">
         <activity
             android:name="cat.santi.ttfe.activity.MainActivity"
-            android:label="@string/ttfe__app_name"
-            android:screenOrientation="portrait">
+            android:label="@string/ttfe__app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
