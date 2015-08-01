@@ -165,7 +165,7 @@ public class MainFragment extends AbstractFragment implements
         if (mTileAdapter != null)
             mTileAdapter.notifyDataSetChanged();
 
-        setStatus(victory ? getString(R.string.ttfe__you_win) : getString(R.string.ttfe__you_lose));
+        setStatus(victory ? getString(R.string.ttfe__status_you_win) : getString(R.string.ttfe__status_you_lose));
     }
 
     @Override
@@ -181,13 +181,13 @@ public class MainFragment extends AbstractFragment implements
     @Override
     public void onNotReady() {
 
-        setStatus(getString(R.string.ttfe__main_status_not_ready));
+        setStatus(getString(R.string.ttfe__status_not_ready));
     }
 
     @Override
     public void onDisallowedMove() {
 
-        setStatus(getString(R.string.ttfe__main_status_disallowed_move));
+        setStatus(getString(R.string.ttfe__status_disallowed_move));
     }
 
     @Override
@@ -239,7 +239,7 @@ public class MainFragment extends AbstractFragment implements
         mTVScore.setText(auxScoreText != null ?
                 auxScoreText : getString(R.string.ttfe__main__score, 0));
         mTVGameState.setText(auxGameStateText != null ?
-                auxGameStateText : getString(R.string.ttfe__state_waiting));
+                auxGameStateText : getString(R.string.ttfe__status_waiting));
         mTVStatus.setText(auxStatusText != null ?
                 auxStatusText : getString(R.string.ttfe__status_good_luck));
 

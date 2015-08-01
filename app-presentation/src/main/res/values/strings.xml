@@ -10,11 +10,11 @@
     <string name="ttfe__main__moves">Moves: %1$s</string>
     <string name="ttfe__main__score">Score: %1$s</string>
     <string name="ttfe__main_state">State: %1$s</string>
-    <string name="ttfe__main_status_not_ready">Not ready yet…</string>
-    <string name="ttfe__main_status_disallowed_move">Movement not allowed</string>
-    <string name="ttfe__you_win">Congratulations, you win!</string>
-    <string name="ttfe__you_lose">You lost</string>
-    <string name="ttfe__state_waiting">Waiting for user input…</string>
+    <string name="ttfe__status_waiting">Waiting for user input…</string>
     <string name="ttfe__status_good_luck">Good luck!</string>
+    <string name="ttfe__status_disallowed_move">Movement not allowed</string>
+    <string name="ttfe__status_you_win">Congratulations, you win!</string>
+    <string name="ttfe__status_you_lose">You lost</string>
+    <string name="ttfe__status_not_ready">Not ready yet…</string>
 
 </resources>
