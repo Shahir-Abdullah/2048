@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="cat.santi.ttfe"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="cat.santi.ttfe"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name="cat.santi.ttfe.Presentation"
@@ -17,10 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="6eabce271dd827b58c0d2e54143873ec09bcb90e" />
+            android:value="6eabce271dd827b58c0d2e54143873ec09bcb90e"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

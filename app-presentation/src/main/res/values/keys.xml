@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="ttfe__key_fabric">6eabce271dd827b58c0d2e54143873ec09bcb90e</string>
+    <string name="ttfe__key_game_analytics">1b102e6237d36a7f0f440f87fd288423</string>
+    <string name="ttfe__secret_game_analytics">f72a0cd49be89eb1e8aa41ed4fcdbfc3a019b4f0</string>
+</resources>

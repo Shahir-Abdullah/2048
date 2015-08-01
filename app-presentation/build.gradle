@@ -55,14 +55,16 @@ android {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
 
     def dependencies =
             rootProject.ext.presentationDependencies
 
-    compile dependencies.butterKnife
-    compile dependencies.recyclerView
-    compile dependencies.appCompat
     compile dependencies.supportV4
+    compile dependencies.appCompat
+    compile dependencies.recyclerView
+    compile dependencies.butterKnife
+    compile dependencies.playServices
     compile dependencies.rxAndroid
     compile dependencies.rxJava
     compile(dependencies.crashlytics) { transitive = true; }
