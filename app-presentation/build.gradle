@@ -14,6 +14,8 @@ android {
 
         versionCode versionCode
         versionName versionName
+
+        multiDexEnabled = true
     }
 
     buildTypes {
