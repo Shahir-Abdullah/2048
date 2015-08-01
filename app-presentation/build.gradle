@@ -8,8 +8,8 @@ android {
         applicationId "cat.santi.ttfe"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 1010200
+        versionName "1.2"
     }
     buildTypes {
         release {
