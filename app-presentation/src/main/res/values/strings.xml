@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- The name of the app -->
-    <string name="ttfe__app_name">2048</string>
-
     <!-- Action button: Reset the game -->
     <string name="ttfe__action_reset">Reset</string>
     <!-- Action button: Go to settings -->

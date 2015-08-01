@@ -1,4 +1,4 @@
-package cat.santi.tttf;
+package cat.santi.ttfe;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

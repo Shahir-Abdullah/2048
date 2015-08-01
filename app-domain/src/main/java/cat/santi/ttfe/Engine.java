@@ -8,6 +8,9 @@ import cat.santi.ttfe.exception.BoardFullException;
 import cat.santi.ttfe.exception.ExceptionFactory;
 
 /**
+ * 2048 game engine. Keeps track of everything related to the game.
+ * // TODO: Review documentation after refactor
+ *
  * @author Santiago Gonzalez
  */
 public class Engine {

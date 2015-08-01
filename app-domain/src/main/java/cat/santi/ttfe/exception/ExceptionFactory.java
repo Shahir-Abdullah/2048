@@ -2,6 +2,8 @@ package cat.santi.ttfe.exception;
 
 /**
  * Factory class to instantiate exceptions.
+ *
+ * @author Santiago Gonzalez
  */
 public class ExceptionFactory {
 

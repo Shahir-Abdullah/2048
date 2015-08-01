@@ -1,26 +1,72 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+
+    compileSdkVersion androidSdkVersion
+    buildToolsVersion androidToolsVersion
 
     defaultConfig {
-        applicationId "cat.santi.ttfe"
-        minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 1010200
-        versionName "1.2"
+
+        applicationId basePackageName
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidSdkVersion
+
+        versionCode versionCode
+        versionName versionName
     }
+
     buildTypes {
+
         release {
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+
+            applicationIdSuffix '.debug'
+        }
+    }
+
+    productFlavors.whenObjectAdded { flavor ->
+
+        def flavorData = rootProject.ext[flavor.name]
+        flavor.applicationId flavorData.packageName
+
+        flavor.buildConfigField 'boolean', fieldShowAds, flavorData.showAds
+        flavor.resValue 'string', appNameResId, flavorData.appName
+        flavor.resValue 'color', brandColorResId, flavorData.appColor
+    }
+
+    productFlavors {
+
+        paid {}
+
+        free {}
+    }
+
+    packagingOptions {
+
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+
+    def dependencies =
+            rootProject.ext.presentationDependencies
+
+    compile dependencies.butterKnife
+    compile dependencies.recyclerView
+    compile dependencies.appCompat
+    compile dependencies.supportV4
+    compile dependencies.rxAndroid
+    compile dependencies.rxJava
+    compile(dependencies.crashlytics) { transitive = true; }
+
     compile project(':app-domain')
+    compile project(':app-model')
 }

@@ -1,0 +1,23 @@
+ext {
+
+    basePackageName = 'cat.santi.ttfe'
+    brandColorResId = 'ttfe__brand_primary_color'
+    appNameResId = 'ttfe__app_name'
+    fieldShowAds = 'TTFE_ADS'
+
+    paid = [
+
+            packageName: "${basePackageName}.premium",
+            appName    : "2048",
+            appColor   : "#1f9df0",
+            showAds    : "false"
+    ]
+
+    free = [
+
+            packageName: "${basePackageName}.free",
+            appName    : "2048 (free)",
+            appColor   : "#1f9df0",
+            showAds    : "true"
+    ]
+}
