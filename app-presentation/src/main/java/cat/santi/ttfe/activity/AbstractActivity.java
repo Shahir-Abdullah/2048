@@ -15,7 +15,8 @@ public abstract class AbstractActivity extends AppCompatActivity {
         parseExtras(getIntent());
         if (savedInstanceState != null)
             restoreState(savedInstanceState);
-        setContentView(layoutResID);
+        if (layoutResID > 0)
+            setContentView(layoutResID);
         getViews();
         if (savedInstanceState == null)
             firstInit();

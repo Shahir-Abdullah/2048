@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="ttfe__app_name">2048 for Android</string>
+    <!-- The name of the app -->
+    <string name="ttfe__app_name">2048</string>
+
+    <!-- Action button: Reset the game -->
     <string name="ttfe__action_reset">Reset</string>
+    <!-- Action button: Go to settings -->
     <string name="ttfe__action_settings">Settings</string>
+    <!-- Action button: Disable all sounds -->
     <string name="ttfe__action_sounds_on">Disable sound</string>
+    <!-- Action button: Enable all sounds -->
     <string name="ttfe__action_sounds_off">Enable sound</string>
+
+    <!-- Main fragment title -->
     <string name="ttfe__main__title">2048 for Android</string>
+    <!-- Main fragment 'counters' label: Moves done -->
     <string name="ttfe__main__moves">Moves: %1$s</string>
+    <!-- Main fragment 'counters' label: Score -->
     <string name="ttfe__main__score">Score: %1$s</string>
-    <string name="ttfe__main_state">State: %1$s</string>
-    <string name="ttfe__status_waiting">Waiting for user input…</string>
+    <!-- Main fragment 'counters' label: Game state -->
+    <string name="ttfe__main_game_state">State: %1$s</string>
+    <!-- Main fragment state: Waiting -->
+    <string name="ttfe__state_waiting">Waiting for user input…</string>
+
+    <!-- Game status: Good luck -->
     <string name="ttfe__status_good_luck">Good luck!</string>
+    <!-- Game status: Move not allowed -->
     <string name="ttfe__status_disallowed_move">Movement not allowed</string>
+    <!-- Game status: Win -->
     <string name="ttfe__status_you_win">Congratulations, you win!</string>
+    <!-- Game status: Lose -->
     <string name="ttfe__status_you_lose">You lost</string>
+    <!-- Game status: Not ready -->
     <string name="ttfe__status_not_ready">Not ready yet…</string>
 
 </resources>

@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Grid item -->
+    <eat-comment/>
+
+    <!-- Size of the frame -->
+    <dimen name="ttfe__grid_item_width">280dp</dimen>
+    <!-- Size of the frame -->
     <dimen name="ttfe__grid_item_size">65dp</dimen>
+    <!-- Size of the text -->
     <dimen name="ttfe__grid_item_text_size">22sp</dimen>
+    <!-- Horizontal and vertical spacing -->
+    <dimen name="ttfe__grid_item_spacing">4dp</dimen>
+    <!-- Padding -->
+    <dimen name="ttfe__grid_item_padding">4dp</dimen>
 
 </resources>

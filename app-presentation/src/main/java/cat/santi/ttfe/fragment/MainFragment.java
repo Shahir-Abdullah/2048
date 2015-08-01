@@ -218,7 +218,7 @@ public class MainFragment extends AbstractFragment implements
     public void setState(State state) {
 
         if (mTVGameState != null)
-            mTVGameState.setText(getString(R.string.ttfe__main_state, state.toString()));
+            mTVGameState.setText(getString(R.string.ttfe__main_game_state, state.toString()));
     }
 
     public void setStatus(String status) {
@@ -239,7 +239,7 @@ public class MainFragment extends AbstractFragment implements
         mTVScore.setText(auxScoreText != null ?
                 auxScoreText : getString(R.string.ttfe__main__score, 0));
         mTVGameState.setText(auxGameStateText != null ?
-                auxGameStateText : getString(R.string.ttfe__status_waiting));
+                auxGameStateText : getString(R.string.ttfe__state_waiting));
         mTVStatus.setText(auxStatusText != null ?
                 auxStatusText : getString(R.string.ttfe__status_good_luck));
 

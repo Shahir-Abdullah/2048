@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Grid item -->
+    <eat-comment/>
+
+    <!-- Size of the frame -->
     <dimen name="ttfe__grid_item_size">85dp</dimen>
+    <!-- Size of the text -->
     <dimen name="ttfe__grid_item_text_size">28sp</dimen>
+    <!-- Horizontal and vertical spacing -->
+    <dimen name="ttfe__grid_item_spacing">4dp</dimen>
+    <!-- Padding -->
+    <dimen name="ttfe__grid_item_padding">4dp</dimen>
+
+    <!-- Main fragment -->
+    <eat-comment/>
+
+    <!-- Text view's margin -->
+    <dimen name="ttfe__text_view_label_margin">4dp</dimen>
+    <!-- Text view's text size -->
+    <dimen name="ttfe__text_view_label_text_size">20sp</dimen>
+    <!-- Text view's text size small -->
+    <dimen name="ttfe__text_view_status_text_size">16sp</dimen>
 
 </resources>

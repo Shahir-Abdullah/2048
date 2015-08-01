@@ -5,62 +5,49 @@
 
     <cat.santi.ttfe.view.TilesGridView
         android:id="@+id/ttfe__fragment_main__gv_tiles"
-        android:layout_width="300dp"
+        style="@style/TTFE__MainFragment.GameBoard"
+        android:layout_width="@dimen/ttfe__grid_item_width"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:columnWidth="100dp"
-        android:gravity="center"
-        android:horizontalSpacing="4dp"
-        android:numColumns="4"
-        android:padding="4dp"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="4dp"/>
+        android:layout_alignParentRight="true"/>
 
     <ImageView
         android:id="@+id/ttfe__fragment_main__iv_logo"
+        style="@style/TTFE__MainFragment.Logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:adjustViewBounds="true"
-        android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ttfe__ic_big"/>
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:id="@+id/ttfe__fragment_main__tv_turn"
+        style="@style/TTFE__MainFragment.Label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__iv_logo"
-        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
-        android:layout_margin="4dp"
-        android:textSize="20sp"/>
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"/>
 
     <TextView
         android:id="@+id/ttfe__fragment_main__tv_score"
+        style="@style/TTFE__MainFragment.Label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_turn"
-        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
-        android:layout_margin="4dp"
-        android:textSize="20sp"/>
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"/>
 
     <TextView
         android:id="@+id/ttfe__fragment_main__tv_game_state"
+        style="@style/TTFE__MainFragment.Label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_score"
-        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
-        android:layout_margin="4dp"
-        android:textSize="16sp"/>
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"/>
 
     <TextView
         android:id="@+id/ttfe__fragment_main__tv_status"
+        style="@style/TTFE__MainFragment.Status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_game_state"
-        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"
-        android:layout_margin="4dp"
-        android:textSize="16sp"/>
+        android:layout_toLeftOf="@id/ttfe__fragment_main__gv_tiles"/>
 
 </RelativeLayout>

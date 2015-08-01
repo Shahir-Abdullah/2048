@@ -1,8 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Base application theme, with a parent from the Android framework -->
     <style name="TTFE__AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
 
+    <!-- App theme -->
     <style name="TTFE__AppTheme" parent="TTFE__AppBaseTheme"/>
+
+    <!-- Main fragment styles -->
+    <style name="TTFE__MainFragment"/>
+
+    <!-- Main fragment: Label style -->
+    <style name="TTFE__MainFragment.Label" parent="android:Widget.TextView">
+        <item name="android:layout_margin">@dimen/ttfe__text_view_label_margin</item>
+        <item name="android:textSize">@dimen/ttfe__text_view_label_text_size</item>
+    </style>
+
+    <!-- Main fragment: Label style -->
+    <style name="TTFE__MainFragment.Status" parent="android:Widget.TextView">
+        <item name="android:layout_margin">@dimen/ttfe__text_view_label_margin</item>
+        <item name="android:textSize">@dimen/ttfe__text_view_status_text_size</item>
+    </style>
+
+    <!-- Main fragment: Game board style -->
+    <style name="TTFE__MainFragment.GameBoard">
+        <item name="android:gravity">center</item>
+        <item name="android:horizontalSpacing">@dimen/ttfe__grid_item_spacing</item>
+        <item name="android:numColumns">4</item>
+        <item name="android:padding">@dimen/ttfe__grid_item_padding</item>
+        <item name="android:stretchMode">columnWidth</item>
+        <item name="android:verticalSpacing">@dimen/ttfe__grid_item_spacing</item>
+    </style>
+
+    <!-- Main fragment: Logo style -->
+    <style name="TTFE__MainFragment.Logo">
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:src">@drawable/ttfe__ic_big</item>
+    </style>
+
+    <!-- Game board styles -->
+    <style name="TTFE__GameBoard"/>
+
+    <!-- Game board: Tile style -->
+    <style name="TTFE__GameBoard.Tile" parent="android:Widget.TextView">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">@dimen/ttfe__grid_item_text_size</item>
+        <item name="android:background">@drawable/ttfe__shape_tile_0_border</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
 
 </resources>
