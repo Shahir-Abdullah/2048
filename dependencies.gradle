@@ -16,17 +16,23 @@ ext {
 
     // plugin: android library
     domainDependencies = [
-
     ]
 
     // plugin: android library
     modelDependencies = [
-
     ]
 
     // plugin: android library
-    modFabricDependencies = [
+    modCrashReportDependencies = [
 
             crashlytics: "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}@aar",
+    ]
+
+    // plugin: android library
+    modAppTrackingDependencies = [
+    ]
+
+    // plugin: android library
+    modInteractionDependencies = [
     ]
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'io.fabric'
 
 android {
 
@@ -27,9 +26,7 @@ android {
 
 dependencies {
 
-    def dependencies = rootProject.ext.modCrashReportDependencies
-
-    compile(dependencies.crashlytics) { transitive = true; }
+    def dependencies = rootProject.ext.modInteractionDependencies
 
     compile project(':ttfe-core')
 }

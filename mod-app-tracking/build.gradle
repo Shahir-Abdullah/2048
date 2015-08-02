@@ -27,5 +27,7 @@ android {
 dependencies {
     compile files('libs/gameanalytics.jar')
 
+    def dependencies = rootProject.ext.modAppTrackingDependencies
+
     compile project(':ttfe-core')
 }
