@@ -1,0 +1,12 @@
+<manifest
+    package="cat.santi.mod.fabric"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application android:allowBackup="true">
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="6eabce271dd827b58c0d2e54143873ec09bcb90e"/>
+    </application>
+
+</manifest>

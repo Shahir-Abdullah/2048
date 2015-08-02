@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion androidSdkVersion
+    buildToolsVersion androidToolsVersion
+
+    defaultConfig {
+
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidSdkVersion
+
+        versionCode versionCode
+        versionName versionName
+    }
+
+    buildTypes {
+
+        release {
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile files('libs/gameanalytics.jar')
+
+    compile project(':ttfe-core')
+}

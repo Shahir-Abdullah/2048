@@ -29,4 +29,5 @@ dependencies {
     def dependencies = rootProject.ext.modelDependencies
 
     compile project(':app-domain')
+    compile project(':ttfe-core')
 }

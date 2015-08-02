@@ -6,6 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/app-domain/app-domain.iml" filepath="$PROJECT_DIR$/app-domain/app-domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-model/app-model.iml" filepath="$PROJECT_DIR$/app-model/app-model.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-presentation/app-presentation.iml" filepath="$PROJECT_DIR$/app-presentation/app-presentation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mod-app-tracking/mod-app-tracking.iml" filepath="$PROJECT_DIR$/mod-app-tracking/mod-app-tracking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mod-crash-report/mod-crash-report.iml" filepath="$PROJECT_DIR$/mod-crash-report/mod-crash-report.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ttfe-core/ttfe-core.iml" filepath="$PROJECT_DIR$/ttfe-core/ttfe-core.iml" />
     </modules>
   </component>
 </project>

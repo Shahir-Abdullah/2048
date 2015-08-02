@@ -1,3 +1,7 @@
 include ':app-presentation'
 include ':app-domain'
 include ':app-model'
+
+include ':ttfe-core'
+include ':mod-crash-report'
+include ':mod-app-tracking'

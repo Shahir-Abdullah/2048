@@ -1,6 +1,32 @@
-apply plugin: 'java'
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion androidSdkVersion
+    buildToolsVersion androidToolsVersion
+
+    defaultConfig {
+
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidSdkVersion
+
+        versionCode versionCode
+        versionName versionName
+    }
+
+    buildTypes {
+
+        release {
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
 
 dependencies {
 
     def dependencies = rootProject.ext.domainDependencies
+
+    compile project(':ttfe-core')
 }

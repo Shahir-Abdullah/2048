@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ttfe__fragment_main__tv_game_state"/>
 
-    <cat.santi.ttfe.view.TilesGridView
+    <cat.santi.ttfe.presentation.view.TilesGridView
         android:id="@+id/ttfe__fragment_main__gv_tiles"
         style="@style/TTFE__MainFragment.GameBoard"
         android:layout_width="wrap_content"

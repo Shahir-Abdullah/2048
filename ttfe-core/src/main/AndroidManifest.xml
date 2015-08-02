@@ -1,0 +1,6 @@
+<manifest package="cat.santi.ttfe.core"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application android:allowBackup="true"/>
+
+</manifest>

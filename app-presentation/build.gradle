@@ -14,8 +14,6 @@ android {
 
         versionCode versionCode
         versionName versionName
-
-//        multiDexEnabled = true
     }
 
     buildTypes {
@@ -57,7 +55,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
 
     def dependencies = rootProject.ext.presentationDependencies
 
@@ -65,8 +62,10 @@ dependencies {
     compile dependencies.appCompat
     compile dependencies.butterKnife
     compile dependencies.playServices
-    compile(dependencies.crashlytics) { transitive = true; }
 
     compile project(':app-domain')
     compile project(':app-model')
+    compile project(':ttfe-core')
+    compile project(':mod-crash-report')
+    compile project(':mod-app-tracking')
 }

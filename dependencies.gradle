@@ -1,27 +1,32 @@
 ext {
 
-    butterKnifeVersion = '7.0.1'
     supportLibraryVersion = '22.2.1'
     playServicesVersion = '7.5.0'
-    firebase = '2.3.1'
-    rxAndroidVersion = '0.25.0'
-    rxJavaVersion = '1.0.10'
+    butterKnifeVersion = '7.0.1'
     crashlyticsVersion = '2.5.0'
 
+    // plugin: android application
     presentationDependencies = [
 
             supportV4   : "com.android.support:support-v4:${supportLibraryVersion}",
             appCompat   : "com.android.support:appcompat-v7:${supportLibraryVersion}",
             playServices: "com.google.android.gms:play-services:${playServicesVersion}",
             butterKnife : "com.jakewharton:butterknife:${butterKnifeVersion}",
-            crashlytics : "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}@aar",
     ]
 
+    // plugin: android library
     domainDependencies = [
 
     ]
 
+    // plugin: android library
     modelDependencies = [
 
+    ]
+
+    // plugin: android library
+    modFabricDependencies = [
+
+            crashlytics: "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}@aar",
     ]
 }

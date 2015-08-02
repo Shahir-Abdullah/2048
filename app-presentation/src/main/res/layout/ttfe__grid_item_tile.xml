@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cat.santi.ttfe.view.SquareTextView
+<cat.santi.ttfe.presentation.view.SquareTextView
     android:id="@+id/ttfe__grid_item_tile__tv_value"
     style="@style/TTFE__GameBoard.Tile"
     xmlns:android="http://schemas.android.com/apk/res/android"

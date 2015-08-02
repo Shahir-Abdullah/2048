@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <cat.santi.ttfe.view.TilesGridView
+    <cat.santi.ttfe.presentation.view.TilesGridView
         android:id="@+id/ttfe__fragment_main__gv_tiles"
         style="@style/TTFE__MainFragment.GameBoard"
         android:layout_width="@dimen/ttfe__grid_item_width"
