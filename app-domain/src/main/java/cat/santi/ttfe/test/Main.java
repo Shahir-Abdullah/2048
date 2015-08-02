@@ -194,6 +194,13 @@ public class Main
     }
 
     @Override
+    public void onHighestUpdated(int highest) {
+
+        // Print information about this callback
+        System.out.println(" -- onHighestUpdated - highest: " + highest);
+    }
+
+    @Override
     public void onTileCreated(int row, int column, int value) {
 
         // Print information about this callback
@@ -204,10 +211,10 @@ public class Main
     }
 
     @Override
-    public void onNotReady() {
+    public void onNotIdleState() {
 
         // Print information about this callback
-        System.out.println(" -- onNotReady");
+        System.out.println(" -- onNotIdleState");
     }
 
     @Override

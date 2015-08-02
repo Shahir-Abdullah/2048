@@ -62,6 +62,10 @@ public class Engine {
      */
     private Board mBoard = null;
     /**
+     * The highest value reached in this session.
+     */
+    private int mHighest = -1;
+    /**
      * The accumulated score.
      */
     private int mScore = -1;
@@ -173,7 +177,7 @@ public class Engine {
             if (!mState.equals(State.IDLE)) {
 
                 if (mListener != null)
-                    mListener.onNotReady();
+                    mListener.onNotIdleState();
                 return false;
             } else if (!canPlay(direction)) {
 
@@ -259,6 +263,16 @@ public class Engine {
     public int getMovements() {
 
         return mMovements;
+    }
+
+    /**
+     * Get the highest value reached by the user this session. This value is not set to 0 when
+     * game resets.
+     *
+     * @return The highest value reached by the user this session.
+     */
+    public int getHighest() {
+        return mHighest;
     }
 
     /**
@@ -385,7 +399,7 @@ public class Engine {
 
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("========== TURN : %4d | SCORE : %6d ==========\n\n",
-                getMovements() + 1, mScore));
+                getMovements() + 1, getScore()));
         for (int indexR = 0; indexR < mBoard.getRows(); indexR++) {
 
             for (int indexC = 0; indexC < mBoard.getColumns(); indexC++) {
@@ -460,7 +474,7 @@ public class Engine {
         else
             direction = null;
 
-        if (fromSquare.getValue() == VOID_VALUE) {
+        if (fromSquare.isVoid()) {
 
             // No value on 'from', so do nothing
             return null;
@@ -500,8 +514,12 @@ public class Engine {
             board.setValue(toSquare.getValue() * 2, dstRow, dstColumn, true);
             board.setValue(VOID_VALUE, srcRow, srcColumn);
 
-            // Add the new value as score
-            addScore(board.getTile(dstRow, dstColumn).value);
+            // TODO: THIS SHOULDN'T BE HERE, BUT WHERE?? FULL FLOW REVIEW!!
+//            final int newValue = board.getTile(dstRow, dstColumn).value;
+//            // Update the highest value reached, if needed
+//            updateHighestReached(newValue);
+//            // Add the new value as score
+//            addScore(newValue);
 
             // Return the PlayResult
             return new PlayResult(dstRow, dstColumn, true);
@@ -510,6 +528,22 @@ public class Engine {
             // Different values on 'from' and 'to', so do nothing
             // Return the PlayResult
             return new PlayResult(srcRow, srcColumn, false);
+        }
+    }
+
+    /**
+     * Update the highest value reached with the new <i>value</i> as long as this value is
+     * actually greater than the last.
+     *
+     * @param value The value to update the highest reached
+     */
+    private void updateHighestReached(int value) {
+
+        if(value > mHighest) {
+
+            mHighest = value;
+            if(mListener != null)
+                mListener.onHighestUpdated(mHighest);
         }
     }
 
@@ -549,6 +583,7 @@ public class Engine {
         this.mBoard = new Board(rows, columns);
 
         // Clean state variables
+        this.mHighest = mHighest == -1 ? 0 : mHighest;
         this.mScore = 0;
         this.mMovements = 0;
         this.mTileValueToWin = tileValueToWin;
@@ -606,7 +641,7 @@ public class Engine {
             // The game is 'victory'
 
             if (mListener != null)
-                mListener.onGameFinished(true, getMovements(), mScore);
+                mListener.onGameFinished(true, getMovements(), getScore());
             setState(State.VICTORY);
         } else if (turnDone) {
             // The turn was completed successfully
@@ -619,7 +654,7 @@ public class Engine {
                 // No more available moves. Game is over
 
                 if (mListener != null)
-                    mListener.onGameFinished(false, getMovements(), mScore);
+                    mListener.onGameFinished(false, getMovements(), getScore());
                 setState(State.DEFEAT);
             } else {
                 // Game is not over yet
@@ -866,10 +901,17 @@ public class Engine {
                          boolean merged);
 
         /**
+         * Notified observers that the highest value has been beaten.
+         *
+         * @param highest The new highest value.
+         */
+        void onHighestUpdated(int highest);
+
+        /**
          * Triggered whenever an action that requires the game to be ready is tried to be
          * performed, but without the game being ready.1
          */
-        void onNotReady();
+        void onNotIdleState();
 
         /**
          * Triggered whenever the user tried to play a non-allowed move.

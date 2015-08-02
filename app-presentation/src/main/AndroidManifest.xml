@@ -23,9 +23,6 @@
             </intent-filter>
         </activity>
 
-        <!--<meta-data-->
-            <!--android:name="io.fabric.ApiKey"-->
-            <!--android:value="6eabce271dd827b58c0d2e54143873ec09bcb90e"/>-->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>

@@ -11,7 +11,7 @@
     <string name="ttfe__action_sounds_off">Enable sound</string>
 
     <!-- Main fragment title -->
-    <string name="ttfe__main__title">2048 for Android</string>
+    <string name="ttfe__main__title">Top score: %1$s</string>
     <!-- Main fragment 'counters' label: Moves done -->
     <string name="ttfe__main__moves">Moves: %1$s</string>
     <!-- Main fragment 'counters' label: Score -->

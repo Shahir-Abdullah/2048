@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import cat.santi.ttfe.Engine;
@@ -33,6 +34,7 @@ public class MainFragment extends AbstractFragment<MainInteractor> implements
     private static final String STATE_GAME_STATE = "STATE_GAME_STATE";
     private static final String STATE_STATUS = "STATE_STATUS";
 
+    private ImageView mIVLogo;
     private TextView mTVMoves;
     private TextView mTVScore;
     private TextView mTVGameState;
@@ -120,6 +122,7 @@ public class MainFragment extends AbstractFragment<MainInteractor> implements
     @Override
     protected void getViews(View fragmentView) {
 
+        mIVLogo = (ImageView) fragmentView.findViewById(R.id.ttfe__fragment_main__iv_logo);
         mTVMoves = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_turn);
         mTVScore = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_score);
         mTVGameState = (TextView) fragmentView.findViewById(R.id.ttfe__fragment_main__tv_game_state);
@@ -220,7 +223,14 @@ public class MainFragment extends AbstractFragment<MainInteractor> implements
     }
 
     @Override
-    public void onNotReady() {
+    public void onHighestUpdated(int highest) {
+
+        if(mCallbacks != null)
+            mCallbacks.onHighestUpdated(highest);
+    }
+
+    @Override
+    public void onNotIdleState() {
 
         setStatus(getString(R.string.ttfe__status_not_ready));
     }
@@ -293,5 +303,7 @@ public class MainFragment extends AbstractFragment<MainInteractor> implements
     public interface MainFragmentCallbacks {
 
         void onUserPlay(Engine.Direction direction);
+
+        void onHighestUpdated(int highest);
     }
 }

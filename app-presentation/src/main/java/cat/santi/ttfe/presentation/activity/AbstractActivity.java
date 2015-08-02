@@ -50,7 +50,9 @@ public abstract class AbstractActivity extends AppCompatActivity {
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+
             actionBar.setTitle(title);
+            actionBar.setElevation(0);
         }
     }
 

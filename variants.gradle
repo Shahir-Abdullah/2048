@@ -7,7 +7,7 @@ ext {
 
     paid = [
 
-            packageName: "${basePackageName}.premium",
+            packageName: "${basePackageName}",
             appName    : "2048",
             appColor   : "#1f9df0",
             showAds    : "false"
@@ -15,7 +15,7 @@ ext {
 
     free = [
 
-            packageName: "${basePackageName}.free",
+            packageName: "${basePackageName}",
             appName    : "2048 (free)",
             appColor   : "#1f9df0",
             showAds    : "true"

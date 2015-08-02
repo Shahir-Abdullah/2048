@@ -5,7 +5,9 @@
     <style name="TTFE__AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
 
     <!-- App theme -->
-    <style name="TTFE__AppTheme" parent="TTFE__AppBaseTheme"/>
+    <style name="TTFE__AppTheme" parent="TTFE__AppBaseTheme">
+        <item name="colorPrimary">@color/ttfe__brand_primary_color</item>
+    </style>
 
     <!-- Main fragment styles -->
     <style name="TTFE__MainFragment"/>

@@ -25,7 +25,7 @@ public class MainActivity extends AbstractActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(R.layout.ttfe__activity_main, savedInstanceState);
 
-        configureActionBar(getString(R.string.ttfe__main__title));
+        configureActionBar(getString(R.string.ttfe__main__title, Engine.getInstance().getHighest()));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MainActivity extends AbstractActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.ttfe__main, menu);
+        getMenuInflater().inflate(R.menu.ttfe__global, menu);
 
         for (int index = 0; index < menu.size(); index++)
             if (menu.getItem(index).getItemId() == R.id.ttfe__menu_action_sounds) {
@@ -133,5 +133,11 @@ public class MainActivity extends AbstractActivity implements
 
         if (mSounds)
             SoundManager.getInstance(this).play(SoundManager.Sound.SLIDE);
+    }
+
+    @Override
+    public void onHighestUpdated(int highest) {
+
+        configureActionBar(getString(R.string.ttfe__main__title, highest));
     }
 }
