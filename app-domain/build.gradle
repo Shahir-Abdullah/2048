@@ -2,8 +2,5 @@ apply plugin: 'java'
 
 dependencies {
 
-    def dependencies =
-            rootProject.ext.domainDependencies
-
-    compile dependencies.rxJava
+    def dependencies = rootProject.ext.domainDependencies
 }

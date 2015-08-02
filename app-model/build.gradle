@@ -26,11 +26,7 @@ android {
 
 dependencies {
 
-    def dependencies =
-            rootProject.ext.modelDependencies
-
-    compile dependencies.fireBase
-    compile dependencies.rxJava
+    def dependencies = rootProject.ext.modelDependencies
 
     compile project(':app-domain')
 }

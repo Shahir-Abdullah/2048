@@ -15,7 +15,7 @@ android {
         versionCode versionCode
         versionName versionName
 
-        multiDexEnabled = true
+//        multiDexEnabled = true
     }
 
     buildTypes {
@@ -59,16 +59,12 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 
-    def dependencies =
-            rootProject.ext.presentationDependencies
+    def dependencies = rootProject.ext.presentationDependencies
 
     compile dependencies.supportV4
     compile dependencies.appCompat
-    compile dependencies.recyclerView
     compile dependencies.butterKnife
     compile dependencies.playServices
-    compile dependencies.rxAndroid
-    compile dependencies.rxJava
     compile(dependencies.crashlytics) { transitive = true; }
 
     compile project(':app-domain')
