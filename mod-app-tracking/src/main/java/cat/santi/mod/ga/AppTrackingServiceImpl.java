@@ -7,7 +7,7 @@ import com.gameanalytics.sdk.GAPlatform;
 import com.gameanalytics.sdk.GameAnalytics;
 import com.gameanalytics.sdk.StringVector;
 
-import cat.santi.ttfe.core.AppTrackingService;
+import cat.santi.ttfe.core.appTracking.AppTrackingService;
 
 /**
  * @author Santiago Gonzalez

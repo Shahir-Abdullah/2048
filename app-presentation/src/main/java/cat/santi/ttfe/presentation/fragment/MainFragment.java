@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -11,12 +14,14 @@ import android.widget.TextView;
 import cat.santi.ttfe.Engine;
 import cat.santi.ttfe.presentation.R;
 import cat.santi.ttfe.presentation.adapter.TileAdapter;
+import cat.santi.ttfe.presentation.interaction.MainInteractor;
+import cat.santi.ttfe.presentation.interaction.interactor.MainInteractorImpl;
 import cat.santi.ttfe.presentation.view.TilesGridView;
 
 /**
  * @author Santiago Gonzalez
  */
-public class MainFragment extends AbstractFragment implements
+public class MainFragment extends AbstractFragment<MainInteractor> implements
         TileAdapter.TileAdapterCallbacks,
         TilesGridView.TilesGridViewCallbacks,
         Engine.Listener {
@@ -47,6 +52,13 @@ public class MainFragment extends AbstractFragment implements
         MainFragment instance = new MainFragment();
         instance.setRetainInstance(true);
         return instance;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -86,6 +98,12 @@ public class MainFragment extends AbstractFragment implements
         super.onPause();
 
         Engine.getInstance().removeListener();
+    }
+
+    @Override
+    protected MainInteractor onCreateInteractor() {
+
+        return new MainInteractorImpl(getApp());
     }
 
     @Override
@@ -139,6 +157,26 @@ public class MainFragment extends AbstractFragment implements
         auxScoreText = savedInstanceState.getString(STATE_SCORE, "");
         auxGameStateText = savedInstanceState.getString(STATE_GAME_STATE, "");
         auxStatusText = savedInstanceState.getString(STATE_STATUS, "");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.ttfe__main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.ttfe__menu_action_reset:
+
+                onActionReset();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -228,11 +266,6 @@ public class MainFragment extends AbstractFragment implements
             mTVStatus.setText(status);
     }
 
-    public interface MainFragmentCallbacks {
-
-        void onUserPlay(Engine.Direction direction);
-    }
-
     private void initViews() {
 
         mTVMoves.setText(auxMovesText != null ?
@@ -248,5 +281,15 @@ public class MainFragment extends AbstractFragment implements
         auxScoreText = null;
         auxGameStateText = null;
         auxStatusText = null;
+    }
+
+    private void onActionReset() {
+
+        getInteractor().getResetGameUC().execute();
+    }
+
+    public interface MainFragmentCallbacks {
+
+        void onUserPlay(Engine.Direction direction);
     }
 }

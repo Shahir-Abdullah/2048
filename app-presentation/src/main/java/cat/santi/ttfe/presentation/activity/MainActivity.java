@@ -104,10 +104,6 @@ public class MainActivity extends AbstractActivity implements
 
         switch (item.getItemId()) {
 
-            case R.id.ttfe__menu_action_reset:
-
-                Engine.getInstance().reset();
-                return true;
             case R.id.ttfe__menu_action_sounds:
 
                 item.setChecked(!item.isChecked());

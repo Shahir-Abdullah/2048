@@ -9,16 +9,4 @@
         android:title="@string/ttfe__action_reset"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/ttfe__menu_action_sounds"
-        android:orderInCategory="99"
-        android:title="@string/ttfe__action_sounds_on"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/ttfe__menu_action_settings"
-        android:orderInCategory="100"
-        android:title="@string/ttfe__action_settings"
-        app:showAsAction="never"/>
-
 </menu>

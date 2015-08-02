@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
-import cat.santi.ttfe.core.fabric.CrashReportService;
+import cat.santi.ttfe.core.crashReport.CrashReportService;
 import io.fabric.sdk.android.Fabric;
 
 /**

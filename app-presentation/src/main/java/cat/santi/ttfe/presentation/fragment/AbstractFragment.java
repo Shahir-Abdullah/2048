@@ -1,29 +1,29 @@
 package cat.santi.ttfe.presentation.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cat.santi.ttfe.core.App;
+
 /**
  * @author Santiago Gonzalez
  */
-public abstract class AbstractFragment extends Fragment {
+public abstract class AbstractFragment<Interact> extends Fragment {
 
-    protected View mFragmentView;
+    private Interact mInteractor;
 
     public View onCreateView(int layoutResID, LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        if (container == null)
-            return null;
 
         configureActionBar();
         parseArguments(getArguments());
         if (savedInstanceState != null)
             restoreState(savedInstanceState);
-        mFragmentView = inflater.inflate(layoutResID, null);
+        View mFragmentView = inflater.inflate(layoutResID, container, false);
         getViews(mFragmentView);
         if (savedInstanceState == null)
             firstInit();
@@ -31,13 +31,38 @@ public abstract class AbstractFragment extends Fragment {
         return mFragmentView;
     }
 
-    ;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mInteractor = onCreateInteractor();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mInteractor = null;
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         saveState(outState);
     }
+
+    protected Interact getInteractor() {
+
+        return mInteractor;
+    }
+
+    protected App getApp() {
+
+        if(getActivity() == null)
+            throw new IllegalStateException("Fragment is already detached from the Activity");
+
+        return (App) getActivity().getApplication();
+    }
+
+    protected abstract Interact onCreateInteractor();
 
     protected abstract void configureActionBar();
 

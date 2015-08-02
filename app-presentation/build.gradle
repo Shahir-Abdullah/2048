@@ -68,4 +68,5 @@ dependencies {
     compile project(':ttfe-core')
     compile project(':mod-crash-report')
     compile project(':mod-app-tracking')
+    compile project(':mod-interaction')
 }

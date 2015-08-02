@@ -162,6 +162,7 @@
     <orderEntry type="module" module-name="mod-app-tracking" exported="" />
     <orderEntry type="module" module-name="app-domain" exported="" />
     <orderEntry type="module" module-name="app-model" exported="" />
+    <orderEntry type="module" module-name="mod-interaction" exported="" />
     <orderEntry type="module" module-name="mod-crash-report" exported="" />
     <orderEntry type="module" module-name="ttfe-core" exported="" />
   </component>
