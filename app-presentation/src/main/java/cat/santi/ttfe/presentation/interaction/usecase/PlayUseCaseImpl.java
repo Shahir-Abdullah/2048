@@ -7,20 +7,24 @@ import cat.santi.ttfe.core.interaction.Interactor;
 import cat.santi.ttfe.core.interaction.UseCaseResult;
 
 /**
- * @author Santiago Gonzalez
+ *
  */
-public class ResetGameUseCaseImpl extends AbstractUseCase {
+public class PlayUseCaseImpl extends AbstractUseCase {
 
-    public ResetGameUseCaseImpl(Interactor interactor) {
+    private final Engine.Direction mDirection;
+
+    public PlayUseCaseImpl(Interactor interactor, Engine.Direction direction) {
         super(interactor);
+
+        mDirection = direction;
     }
 
     @Override
     public UseCaseResult execute() {
 
-        Engine.getInstance().reset();
+        final boolean result = Engine.getInstance().play(mDirection, false);
         return new UseCaseResultImpl.Builder()
-                .setSuccess(true)
+                .setSuccess(result)
                 .build();
     }
 }

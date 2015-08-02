@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cat.santi.ttfe.Engine;
+import cat.santi.ttfe.core.interaction.UseCaseResult;
 import cat.santi.ttfe.presentation.R;
 import cat.santi.ttfe.presentation.adapter.TileAdapter;
 import cat.santi.ttfe.presentation.interaction.MainInteractor;
@@ -182,7 +183,8 @@ public class MainFragment extends AbstractFragment<MainInteractor> implements
     @Override
     public void onPlayed(Engine.Direction direction) {
 
-        if (Engine.getInstance().play(direction, false))
+        final UseCaseResult result = getInteractor().getPlayUC(direction).execute();
+        if (result.isSuccess())
             if (mCallbacks != null)
                 mCallbacks.onUserPlay(direction);
     }

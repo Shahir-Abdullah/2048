@@ -7,5 +7,5 @@ public interface UseCase {
 
     Interactor getInteractor();
 
-    void execute();
+    UseCaseResult execute();
 }
