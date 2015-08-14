@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/app-presentation/app-presentation.iml" filepath="$PROJECT_DIR$/app-presentation/app-presentation.iml" />
       <module fileurl="file://$PROJECT_DIR$/mod-app-tracking/mod-app-tracking.iml" filepath="$PROJECT_DIR$/mod-app-tracking/mod-app-tracking.iml" />
       <module fileurl="file://$PROJECT_DIR$/mod-crash-report/mod-crash-report.iml" filepath="$PROJECT_DIR$/mod-crash-report/mod-crash-report.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mod-gameboard/mod-gameboard.iml" filepath="$PROJECT_DIR$/mod-gameboard/mod-gameboard.iml" />
       <module fileurl="file://$PROJECT_DIR$/mod-interaction/mod-interaction.iml" filepath="$PROJECT_DIR$/mod-interaction/mod-interaction.iml" />
       <module fileurl="file://$PROJECT_DIR$/ttfe-core/ttfe-core.iml" filepath="$PROJECT_DIR$/ttfe-core/ttfe-core.iml" />
     </modules>

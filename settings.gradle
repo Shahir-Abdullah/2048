@@ -1,7 +1,9 @@
-include ':app-presentation', ':mod-interaction'
+include ':app-presentation'
 include ':app-domain'
 include ':app-model'
 
 include ':ttfe-core'
 include ':mod-crash-report'
 include ':mod-app-tracking'
+include ':mod-interaction'
+include ':mod-gameboard'

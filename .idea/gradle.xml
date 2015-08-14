@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/app-presentation" />
             <option value="$PROJECT_DIR$/mod-app-tracking" />
             <option value="$PROJECT_DIR$/mod-crash-report" />
+            <option value="$PROJECT_DIR$/mod-gameboard" />
             <option value="$PROJECT_DIR$/mod-interaction" />
             <option value="$PROJECT_DIR$/ttfe-core" />
           </set>
