@@ -118,8 +118,6 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
     @Override
     public void move(Type object, int colEnd, int rowEnd)
             throws NotFoundException, NotEmptyException {
-        if (colEnd < 0 || colEnd >= getHeight() || rowEnd < 0 || rowEnd >= getHeight())
-            throw new IndexOutOfBoundsException();
         final IntPair position = find(object);
         if (position == null)
             throw new NotFoundException();
