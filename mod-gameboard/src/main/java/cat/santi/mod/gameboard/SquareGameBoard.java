@@ -1,7 +1,5 @@
 package cat.santi.mod.gameboard;
 
-import com.sun.istack.internal.Nullable;
-
 import cat.santi.mod.gameboard.exception.NotEmptyException;
 import cat.santi.mod.gameboard.exception.NotFoundException;
 
@@ -32,7 +30,6 @@ public interface SquareGameBoard<Type> {
      * @param object The object to be found.
      * @return The coordinates of the object, or {@code null} if not found.
      */
-    @Nullable
     IntPair find(Type object);
 
     /**
@@ -42,7 +39,6 @@ public interface SquareGameBoard<Type> {
      * @param row The row.
      * @return The object at the location, or {@code null} if it was empty.
      */
-    @Nullable
     Type get(int col, int row);
 
     /**
@@ -79,7 +75,6 @@ public interface SquareGameBoard<Type> {
      * @param row    The row in which to place the object.
      * @return The previous value at the position, if any
      */
-    @Nullable
     Type put(Type object, int col, int row);
 
     /**
@@ -90,7 +85,6 @@ public interface SquareGameBoard<Type> {
      * @param row The row.
      * @return The previous object, or {@code null} if the position was empty.
      */
-    @Nullable
     Type remove(int col, int row);
 
     /**
@@ -133,11 +127,11 @@ public interface SquareGameBoard<Type> {
         /**
          * @return The X value.
          */
-        int getX();
+        int getColumn();
 
         /**
          * @return The Y value.
          */
-        int getY();
+        int getRow();
     }
 }

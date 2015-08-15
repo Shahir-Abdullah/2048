@@ -4,6 +4,7 @@ ext {
     playServicesVersion = '7.5.0'
     butterKnifeVersion = '7.0.1'
     crashlyticsVersion = '2.5.0'
+    junitVersion = '4.12'
 
     // plugin: android application
     presentationDependencies = [
@@ -34,5 +35,10 @@ ext {
 
     // plugin: android library
     modInteractionDependencies = [
+    ]
+
+    testingDependencies = [
+
+            junit : "junit:junit:${junitVersion}",
     ]
 }

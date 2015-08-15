@@ -18,8 +18,7 @@ import cat.santi.mod.gameboard.exception.NotFoundException;
  *  (height - y axis - 2 rows)
  * </pre>
  * As pictured in the schema, and applying to all methods of this class, every time a coordinate
- * input is required, it will always be in the form of {@code (column, row)}. Also, all of the
- * methods that can return an object are {@code @Nullable}.
+ * input is required, it will always be in the form of {@code (column, row)}.
  */
 public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
 
@@ -121,9 +120,10 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
             throws NotFoundException, NotEmptyException {
         if (colEnd < 0 || colEnd >= getHeight() || rowEnd < 0 || rowEnd >= getHeight())
             throw new IndexOutOfBoundsException();
-        if (!has(object))
+        final IntPair position = find(object);
+        if (position == null)
             throw new NotFoundException();
-
+        move(position.getColumn(), position.getRow(), colEnd, rowEnd);
     }
 
     @Override
@@ -197,12 +197,12 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
         }
 
         @Override
-        public int getX() {
+        public int getColumn() {
             return x;
         }
 
         @Override
-        public int getY() {
+        public int getRow() {
             return y;
         }
     }

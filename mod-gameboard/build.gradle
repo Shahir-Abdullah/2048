@@ -1,1 +1,8 @@
 apply plugin: 'java'
+
+dependencies {
+
+    def testingDependencies = rootProject.ext.testingDependencies
+
+    testCompile testingDependencies.junit
+}
