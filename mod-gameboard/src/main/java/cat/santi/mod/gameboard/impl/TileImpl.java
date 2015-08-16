@@ -7,14 +7,28 @@ import cat.santi.mod.gameboard.Tile;
  */
 public class TileImpl implements Tile {
 
+    /**
+     * The tile value.
+     */
     private int mValue;
+    /**
+     * Whether or not it has been merged with another tile this turn.
+     */
+    private boolean mMergedThisTurn;
 
+    /**
+     * Constructor.
+     */
     public TileImpl() {
         this(0);
     }
 
+    /**
+     * Constructor.
+     */
     public TileImpl(int value) {
         mValue = value;
+        mMergedThisTurn = false;
     }
 
     @Override
@@ -25,5 +39,15 @@ public class TileImpl implements Tile {
     @Override
     public void setValue(int value) {
         mValue = value;
+    }
+
+    @Override
+    public boolean hasMergedThisTurn() {
+        return mMergedThisTurn;
+    }
+
+    @Override
+    public void setMergedThisTurn(boolean mergedThisTurn) {
+        mMergedThisTurn = mergedThisTurn;
     }
 }

@@ -112,7 +112,7 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
             throw new IndexOutOfBoundsException();
         if (!isEmpty(colEnd, rowEnd))
             throw new NotEmptyException();
-        mBoardMatrix[colEnd][rowEnd] = get(colStart, rowStart);
+        put(remove(colStart, rowStart), colEnd, rowEnd);
     }
 
     @Override
@@ -132,8 +132,6 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
         mBoardMatrix[col][row] = object;
         if (object != null)
             mCount++;
-        if (prevItem != null)
-            mCount--;
         return prevItem;
     }
 
