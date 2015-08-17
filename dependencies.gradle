@@ -4,6 +4,7 @@ ext {
     playServicesVersion = '7.5.0'
     butterKnifeVersion = '7.0.1'
     crashlyticsVersion = '2.5.0'
+    gsonVersion = '1.7.2'
     junitVersion = '4.12'
 
     // plugin: android application
@@ -35,6 +36,12 @@ ext {
 
     // plugin: android library
     modInteractionDependencies = [
+    ]
+
+    // plugin: java library
+    modGameboardDependencies = [
+
+            gson : "com.google.code.gson:gson:${gsonVersion}"
     ]
 
     testingDependencies = [

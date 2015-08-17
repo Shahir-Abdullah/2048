@@ -1,5 +1,7 @@
 package cat.santi.mod.gameboard;
 
+import java.io.Serializable;
+
 import cat.santi.mod.gameboard.exception.NotEmptyException;
 import cat.santi.mod.gameboard.exception.NotFoundException;
 
@@ -122,7 +124,7 @@ public interface SquareGameBoard<Type> {
     /**
      * Take an snapshot of the current board. It can later create a new board.
      */
-    SquareGameBoard takeSnapshot();
+    Snapshot takeSnapshot();
 
     /**
      * Get the board matrix representation of the board. This method is intended to used to create
@@ -155,5 +157,27 @@ public interface SquareGameBoard<Type> {
          * @return The Y value.
          */
         int getRow();
+    }
+
+    /**
+     * An snapshot is a container for a board state. With them it's possible to easily store and
+     * resume a game. The class implements the {@link Serializable} interface;
+     */
+    interface Snapshot extends Serializable {
+
+        /**
+         * Get the board data as a Json string.
+         *
+         * @return The board data Json formatted.
+         */
+        String getJson();
+
+        /**
+         * Get a new board from the data of this snapshot, represented in the given
+         * <i>classOfType</i> format.
+         *
+         * @return The new board in a class of <i>classOfType</i>.
+         */
+        <Type> Type from(Class<Type> classOfType) throws ClassNotFoundException;
     }
 }

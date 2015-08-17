@@ -2,7 +2,10 @@ apply plugin: 'java'
 
 dependencies {
 
+    def dependencies = rootProject.ext.modGameboardDependencies
     def testingDependencies = rootProject.ext.testingDependencies
+
+    compile dependencies.gson
 
     testCompile testingDependencies.junit
 }

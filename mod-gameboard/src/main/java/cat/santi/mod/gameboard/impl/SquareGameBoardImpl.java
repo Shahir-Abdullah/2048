@@ -1,5 +1,7 @@
 package cat.santi.mod.gameboard.impl;
 
+import com.google.gson.Gson;
+
 import cat.santi.mod.gameboard.SquareGameBoard;
 import cat.santi.mod.gameboard.exception.NotEmptyException;
 import cat.santi.mod.gameboard.exception.NotFoundException;
@@ -183,8 +185,8 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
     }
 
     @Override
-    public SquareGameBoard takeSnapshot() {
-        return new SquareGameBoardImpl(this);
+    public Snapshot takeSnapshot() {
+        return new SnapshotImpl(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -244,6 +246,38 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
         @Override
         public int getRow() {
             return y;
+        }
+    }
+
+    /**
+     * Implementation for the Snapshot class.
+     */
+    public static class SnapshotImpl implements Snapshot {
+
+        /**
+         * The Json data of the board.
+         */
+        private String mJsonData;
+
+        /**
+         * Constructor. Creates a snapshot with the given <i>data</i>, which can't be {@code null}.
+         *
+         * @param data The data to create the snapshot.
+         */
+        public SnapshotImpl(Object data) {
+            if (data == null)
+                throw new IllegalArgumentException("data == null");
+            mJsonData = new Gson().toJson(data);
+        }
+
+        @Override
+        public String getJson() {
+            return mJsonData;
+        }
+
+        @Override
+        public <Type> Type from(Class<Type> classOfType) throws ClassNotFoundException {
+            return new Gson().fromJson(mJsonData, classOfType);
         }
     }
 }
