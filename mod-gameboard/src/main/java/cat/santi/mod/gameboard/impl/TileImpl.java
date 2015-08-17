@@ -50,4 +50,9 @@ public class TileImpl implements Tile {
     public void setMergedThisTurn(boolean mergedThisTurn) {
         mMergedThisTurn = mergedThisTurn;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof TileImpl && ((TileImpl) obj).mValue == mValue;
+    }
 }

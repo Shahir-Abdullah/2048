@@ -120,6 +120,28 @@ public interface SquareGameBoard<Type> {
     int getCount();
 
     /**
+     * Take an snapshot of the current board. It can later create a new board.
+     */
+    SquareGameBoard takeSnapshot();
+
+    /**
+     * Get the board matrix representation of the board. This method is intended to used to create
+     * a board from an snapshot. You should not use this method.
+     *
+     * @return The matrix game board.
+     */
+    Type[][] getBoardMatrix();
+
+    /**
+     * Check whether or not this board is the same size and has the same objects as the given
+     * <i>sample</i>.
+     *
+     * @param sample The sample to check against.
+     * @return {@code true} if the boards matches, {@code false} otherwise.
+     */
+    boolean same(SquareGameBoard sample);
+
+    /**
      * Basic pair of {@code int} values.
      */
     interface IntPair {

@@ -102,7 +102,7 @@ public class TTFEGameBoardImplTest {
         Tile someTileH = new TileImpl(2);
         Tile someTileI = new TileImpl(4);
         Tile someTileJ = new TileImpl(4);
-        
+
         // Put them in the board
         mTTFEGameBoard.put(someTileA, 0, 0);
         mTTFEGameBoard.put(someTileB, 0, 2);

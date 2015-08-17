@@ -76,6 +76,21 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
         mCount = 0;
     }
 
+    /**
+     * Create a new board from the given <i>snapshot</i>.
+     *
+     * @param snapshot The previous board to copy.
+     */
+    public SquareGameBoardImpl(SquareGameBoard snapshot) {
+        if (snapshot == null)
+            throw new IllegalArgumentException("snapshot == null");
+
+        mWidth = snapshot.getWidth();
+        mHeight = snapshot.getHeight();
+        mBoardMatrix = snapshot.getBoardMatrix();
+        mCount = snapshot.getCount();
+    }
+
     @Override
     public int getWidth() {
         return mWidth;
@@ -165,6 +180,35 @@ public class SquareGameBoardImpl<Type> implements SquareGameBoard<Type> {
     @Override
     public int getCount() {
         return mCount;
+    }
+
+    @Override
+    public SquareGameBoard takeSnapshot() {
+        return new SquareGameBoardImpl(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Type[][] getBoardMatrix() {
+        return (Type[][]) mBoardMatrix;
+    }
+
+    @Override
+    public boolean same(SquareGameBoard sample) {
+        if (sample == null)
+            return false;
+        if (sample.getWidth() != getWidth() || sample.getHeight() != getHeight())
+            return false;
+        if (sample.getCount() != getCount())
+            return false;
+        for (int width = 0; width < getWidth(); width++)
+            for (int height = 0; height < getHeight(); height++)
+                if (sample.isEmpty(width, height) != isEmpty(width, height))
+                    return false;
+                else if (!sample.isEmpty(width, height)
+                        && !sample.get(width, height).equals(get(width, height)))
+                    return false;
+        return true;
     }
 
     /**
