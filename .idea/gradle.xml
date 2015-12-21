@@ -20,6 +20,19 @@
             <option value="$PROJECT_DIR$/ttfe-core" />
           </set>
         </option>
+        <option name="myModules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app-domain" />
+            <option value="$PROJECT_DIR$/app-model" />
+            <option value="$PROJECT_DIR$/app-presentation" />
+            <option value="$PROJECT_DIR$/mod-app-tracking" />
+            <option value="$PROJECT_DIR$/mod-crash-report" />
+            <option value="$PROJECT_DIR$/mod-gameboard" />
+            <option value="$PROJECT_DIR$/mod-interaction" />
+            <option value="$PROJECT_DIR$/ttfe-core" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

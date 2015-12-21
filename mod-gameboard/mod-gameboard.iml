@@ -30,6 +30,5 @@
     <orderEntry type="library" exported="" name="gson-1.7.2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
-    <orderEntry type="library" exported="" name="mod-gameboard.mod-gameboard" level="project" />
   </component>
 </module>
